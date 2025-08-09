@@ -28,6 +28,20 @@
       .success { color: #2e7d32; }
       .warn { color: #ef6c00; }
 
+      .donate-btn {
+        position: fixed;
+        top: 16px;
+        right: 24px;
+        background: #d32f2f;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #d32f2f;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .donate-btn:hover { filter: brightness(0.95); }
+
       /* Dark mode readability tweaks */
       @media (prefers-color-scheme: dark) {
         body { background: #0f1115; color: #e5e7eb; }
@@ -54,8 +68,10 @@
   </head>
   <body>
     <h1>Auto musicL Maker</h1>
+    <a class="donate-btn" href="https://www.paypal.com/donate?token=DkR0zjZ7Yh4xvFHlECVEKNpBd3U-xOFBn0VYYUWUKpwVDpqsbHY85dFWUH-ELwcUw8J3kvEmCSMyTvmw" target="_blank" rel="noopener noreferrer">Donate</a>
 
     <div class="toolbar">
+      <button id="btnHowTo">How to</button>
       <input id="feedUrl" type="url" placeholder="https://example.com/feed.xml" style="flex:1;min-width:260px;" />
       <button id="btnLoad">Load</button>
       <button id="btnGenerate" class="primary">Generate XML</button>
@@ -63,9 +79,25 @@
       <span id="status" class="muted"></span>
     </div>
 
+    <dialog id="howToModal" style="max-width:680px;">
+      <h2 style="margin-top:0;">How to</h2>
+      <ol>
+        <li>Paste an XML feed into the box</li>
+        <li>Click Load or press Enter</li>
+        <li>Enter your info for the playlist you're making</li>
+        <li>If this is a new feed click the "Generate GUID" button.</li>
+        <li>Click Generate XML</li>
+        <li>The new feed will show up in the Output box</li>
+        <li>Click Download XML to save the new feed</li>
+      </ol>
+      <form method="dialog" style="margin-top:12px;">
+        <button>Close</button>
+      </form>
+    </dialog>
+
     <div class="card">
       <h2>Channel</h2>
-      <div class="row"><label for="author">Author (person making the playlist)</label><input id="author" type="text" placeholder="ChadF" /></div>
+      <div class="row"><label for="author">Author</label><input id="author" type="text" placeholder="ChadF" /></div>
       <div class="row"><label for="title">Title</label><input id="title" type="text" /></div>
       <div class="row"><label for="description">Description</label><textarea id="description"></textarea></div>
       
@@ -80,7 +112,7 @@
         <div class="row"><label for="imageUrl">image.url</label><input id="imageUrl" type="url" /></div>
       </div>
       <div class="card">
-        <h2>Podcast</h2>
+        <h2>GUID <span class="muted" style="font-weight: normal;">If this is a new feed, click "Generate GUID".</span></h2>
         <div class="row">
           <label for="podGuid">podcast:guid</label>
           <div style="display:flex; gap:8px; align-items:center;">
@@ -88,7 +120,6 @@
             <button id="btnGenGuid" type="button">Generate GUID</button>
           </div>
         </div>
-        <div class="muted">- medium is set to "music" automatically</div>
       </div>
     </div>
 
@@ -114,6 +145,8 @@
         podGuid: QS('#podGuid'),
         output: QS('#output'),
         status: QS('#status'),
+        btnHowTo: QS('#btnHowTo'),
+        howToModal: QS('#howToModal'),
         btnLoad: QS('#btnLoad'),
         feedUrl: QS('#feedUrl'),
         btnGenerate: QS('#btnGenerate'),
@@ -355,6 +388,10 @@
       }
 
       el.btnLoad.addEventListener('click', () => { loadFeed().catch(() => {}); });
+
+      el.btnHowTo.addEventListener('click', () => {
+        el.howToModal.showModal();
+      });
 
       // Hitting Enter in the feed URL field triggers Load
       el.feedUrl.addEventListener('keydown', (e) => {
