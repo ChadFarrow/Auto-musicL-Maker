@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/playlist/maker", "destination": "/docs/editor.html" }
+  ],
+  "redirects": [
+    { "source": "/", "destination": "/playlist/maker", "permanent": false }
+  ]
+}
