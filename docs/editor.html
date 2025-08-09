@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Playlist Feed Editor</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; line-height: 1.4; }
+      h1 { font-size: 1.4rem; margin: 0 0 16px; }
+      h2 { font-size: 1.1rem; margin: 24px 0 8px; }
+      .row { display: grid; grid-template-columns: 180px 1fr; gap: 10px; align-items: center; margin: 6px 0; }
+      input[type="text"], input[type="url"], textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #9993; }
+      textarea { min-height: 80px; }
+      .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+      button { padding: 8px 12px; border-radius: 6px; border: 1px solid #9993; background: #eee; cursor: pointer; }
+      button.primary { background: #1e88e5; color: #fff; border-color: #1e88e5; }
+      button.danger { background: #d32f2f; color: #fff; border-color: #d32f2f; }
+      table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+      th, td { border-bottom: 1px solid #9993; padding: 8px; text-align: left; }
+      tbody tr:hover { background: #9991; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .card { border: 1px solid #9993; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+      .muted { opacity: 0.75; }
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      @media (max-width: 880px) { .grid2 { grid-template-columns: 1fr; } .row { grid-template-columns: 1fr; } }
+      .footer { margin-top: 16px; font-size: 0.9rem; }
+      .success { color: #2e7d32; }
+      .warn { color: #ef6c00; }
+
+      /* Dark mode readability tweaks */
+      @media (prefers-color-scheme: dark) {
+        body { background: #0f1115; color: #e5e7eb; }
+        .card { background: #111827; border-color: #374151; }
+        input[type="text"], input[type="url"], textarea {
+          background: #1f2937; color: #e5e7eb; border: 1px solid #374151;
+        }
+        input::placeholder, textarea::placeholder { color: #9ca3af; }
+        button { background: #374151; color: #e5e7eb; border-color: #4b5563; }
+        button.primary { background: #2563eb; border-color: #2563eb; color: #fff; }
+        button.danger { background: #dc2626; border-color: #dc2626; color: #fff; }
+        th, td { border-bottom-color: #374151; }
+        tbody tr:hover { background: #1f2937; }
+      }
+
+      /* Focus visibility */
+      input[type="text"], input[type="url"], textarea, button { transition: border-color .15s, box-shadow .15s; }
+      input:focus, textarea:focus {
+        outline: 2px solid #60a5fa; outline-offset: 1px; border-color: #60a5fa;
+      }
+      button:focus { outline: 2px solid #93c5fd; outline-offset: 2px; }
+      button:disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+  </head>
+  <body>
+    <h1>Playlist Feed Editor</h1>
+
+    <div class="toolbar">
+      <button id="btnPaste">Paste XML…</button>
+      <button id="btnGenerate" class="primary">Generate XML</button>
+      <button id="btnDownload">Download XML</button>
+      <span id="status" class="muted"></span>
+    </div>
+
+    <div class="card">
+      <h2>Channel</h2>
+      <div class="row"><label for="author">Author</label><input id="author" type="text" placeholder="ChadF" /></div>
+      <div class="row"><label for="title">Title</label><input id="title" type="text" /></div>
+      <div class="row"><label for="description">Description</label><textarea id="description"></textarea></div>
+      <div class="row"><label for="link">Link</label><input id="link" type="url" placeholder="https://example.com/" /></div>
+      <div class="row"><label for="pubDate">Playlist Date (pubDate)</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input id="pubDate" type="text" class="mono" placeholder="Fri, 08 Aug 2025 03:06:58 GMT" />
+          <button id="btnNow" type="button">Now</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <h2>Image</h2>
+        <div class="row"><label for="imageUrl">image.url</label><input id="imageUrl" type="url" /></div>
+      </div>
+      <div class="card">
+        <h2>Podcast</h2>
+        <div class="row">
+          <label for="podGuid">podcast:guid</label>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input id="podGuid" type="text" class="mono" placeholder="auto-generate v4 UUID" />
+            <button id="btnGenGuid" type="button">Generate GUID</button>
+          </div>
+        </div>
+        <div class="muted">- medium is set to "music" automatically</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;">
+        <h2 style="margin:0;">Items (podcast:remoteItem)</h2>
+        <div class="toolbar" style="margin:0;">
+          <button id="btnAddRow">Add Row</button>
+          <button id="btnRemoveSelected" class="danger">Remove Selected</button>
+          <button id="btnImportCurrent" title="Create rows from the currently loaded feed's items">Import Items from Feed</button>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:34px;">Sel</th>
+            <th>feedGuid</th>
+            <th>itemGuid</th>
+          </tr>
+        </thead>
+        <tbody id="itemsBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Output</h2>
+      <textarea id="output" class="mono" placeholder="Generated XML will appear here after you click Generate XML"></textarea>
+    </div>
+
+    <div class="footer muted">
+      Tips:
+      <ul>
+        <li>Run a simple local server to avoid CORS when loading the XML (e.g., <span class="mono">python3 -m http.server</span> from repo root, then open <span class="mono">/docs/editor.html</span>).</li>
+        <li>This tool ensures a single <span class="mono">&lt;item&gt;</span> wrapper and preserves your <span class="mono">&lt;author&gt;</span> tag.</li>
+      </ul>
+    </div>
+
+    <script>
+      const QS = (sel) => document.querySelector(sel);
+      const el = {
+        author: QS('#author'),
+        title: QS('#title'),
+        description: QS('#description'),
+        link: QS('#link'),
+        pubDate: QS('#pubDate'),
+        // removed: language, lastBuildDate inputs
+        imageUrl: QS('#imageUrl'),
+        podGuid: QS('#podGuid'),
+        itemsBody: QS('#itemsBody'),
+        output: QS('#output'),
+        status: QS('#status'),
+        // removed: btnLoad (auto-loads on page open)
+        btnPaste: QS('#btnPaste'),
+        btnGenerate: QS('#btnGenerate'),
+        btnDownload: QS('#btnDownload'),
+        btnAddRow: QS('#btnAddRow'),
+        btnRemoveSelected: QS('#btnRemoveSelected'),
+        btnGenGuid: QS('#btnGenGuid'),
+        btnImportCurrent: QS('#btnImportCurrent'),
+        btnNow: QS('#btnNow'),
+      };
+
+      function setStatus(msg, tone = 'muted') {
+        el.status.className = tone;
+        el.status.textContent = msg;
+      }
+
+      function rfc822Now() {
+        return new Date().toUTCString();
+      }
+
+      function clearTable() { el.itemsBody.innerHTML = ''; }
+
+      function addRow(feedGuid = '', itemGuid = '') {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="checkbox" /></td>
+          <td><input type="text" value="${feedGuid}" class="mono" placeholder="feedGuid" /></td>
+          <td><input type="text" value="${itemGuid}" class="mono" placeholder="itemGuid" /></td>
+        `;
+        el.itemsBody.appendChild(tr);
+      }
+
+      function readRows() {
+        const rows = [];
+        for (const tr of el.itemsBody.querySelectorAll('tr')) {
+          const inputs = tr.querySelectorAll('input[type="text"]');
+          if (inputs.length >= 2) {
+            const feedGuid = inputs[0].value.trim();
+            const itemGuid = inputs[1].value.trim();
+            if (feedGuid && itemGuid) rows.push({ feedGuid, itemGuid });
+          }
+        }
+        return rows;
+      }
+
+      let currentDoc = null; // stores the last loaded/pasted XML Document
+
+      function populateFromDoc(doc) {
+        const channel = doc.querySelector('channel');
+        if (!channel) throw new Error('Missing <channel>');
+
+        currentDoc = doc;
+
+        const text = (sel) => channel.querySelector(sel)?.textContent?.trim() || '';
+        const textByTag = (tagName) => {
+          const node = channel.getElementsByTagName(tagName)[0];
+          return node?.textContent?.trim() || '';
+        };
+
+        el.author.value = text('author');
+        el.title.value = text('title');
+        el.description.value = text('description');
+        el.link.value = text('link');
+        el.pubDate.value = text('pubDate');
+        el.imageUrl.value = channel.querySelector('image > url')?.textContent?.trim() || '';
+        // Read namespaced tag using tagName to avoid CSS selector colon issues
+        el.podGuid.value = textByTag('podcast:guid');
+
+        clearTable();
+        // Collect all remoteItems across any <item> wrappers
+        const remoteItems = doc.getElementsByTagName('podcast:remoteItem');
+        for (const node of remoteItems) {
+          const feedGuid = node.getAttribute('feedGuid') || '';
+          const itemGuid = node.getAttribute('itemGuid') || '';
+          addRow(feedGuid, itemGuid);
+        }
+
+        setStatus(`Loaded ${remoteItems.length} entries`);
+      }
+
+      async function fetchXml() {
+        const res = await fetch('doerfel-verse-music.xml', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.text();
+      }
+
+      function parseXml(xmlText) {
+        const parser = new DOMParser();
+
+        function sanitize(text) {
+          if (!text) return '';
+          let t = text.replace(/^\uFEFF/, '').trim(); // strip BOM
+          // If there is preface text before the XML (e.g., human-readable header),
+          // cut everything before the XML declaration or root tag.
+          const anchors = ['<?xml', '<rss', '<feed'];
+          let idx = -1;
+          for (const a of anchors) {
+            const i = t.indexOf(a);
+            if (i !== -1 && (idx === -1 || i < idx)) idx = i;
+          }
+          if (idx > 0) t = t.slice(idx);
+
+          // Also trim any trailing text after the closing tag
+          const endTags = ['</rss>', '</feed>'];
+          let endIdx = -1;
+          for (const e of endTags) {
+            const j = t.lastIndexOf(e);
+            if (j !== -1 && j + e.length > endIdx) endIdx = j + e.length;
+          }
+          if (endIdx !== -1) t = t.slice(0, endIdx);
+          return t;
+        }
+
+        let cleaned = sanitize(xmlText);
+        let doc = parser.parseFromString(cleaned, 'text/xml');
+        let err = doc.querySelector('parsererror');
+
+        if (err) {
+          // As a fallback, try trimming to the first '<' we can find
+          const firstLt = cleaned.indexOf('<');
+          if (firstLt > 0) {
+            cleaned = cleaned.slice(firstLt);
+            doc = parser.parseFromString(cleaned, 'text/xml');
+            err = doc.querySelector('parsererror');
+          }
+        }
+
+        if (err) throw new Error('Invalid XML');
+        return doc;
+      }
+
+      function buildXml() {
+        // Create new document preserving podcast namespace
+        const doc = document.implementation.createDocument('', '', null);
+
+        const rss = doc.createElement('rss');
+        rss.setAttribute('version', '2.0');
+        rss.setAttribute('xmlns:podcast', 'https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md');
+        doc.appendChild(rss);
+
+        const channel = doc.createElement('channel');
+        rss.appendChild(channel);
+
+        function appendText(tag, value) {
+          if (!value) return;
+          const node = doc.createElement(tag);
+          node.textContent = value;
+          channel.appendChild(node);
+        }
+
+        appendText('author', el.author.value.trim());
+        appendText('title', el.title.value.trim());
+        appendText('description', el.description.value.trim());
+        appendText('link', el.link.value.trim());
+        // Optional: default language and updated dates
+        appendText('language', 'en');
+        appendText('pubDate', el.pubDate.value.trim() || rfc822Now());
+        appendText('lastBuildDate', rfc822Now());
+
+        const image = doc.createElement('image');
+        function imgChild(tag, value) {
+          if (!value) return;
+          const n = doc.createElement(tag);
+          n.textContent = value;
+          image.appendChild(n);
+        }
+        imgChild('url', el.imageUrl.value.trim());
+        if (image.childNodes.length > 0) channel.appendChild(image);
+
+        appendText('podcast:medium', 'music');
+        appendText('podcast:guid', el.podGuid.value.trim() || generateUUIDv4());
+
+        // Ensure single <item> wrapper and add all remoteItem entries
+        const item = doc.createElement('item');
+        const pairs = readRows();
+        for (const { feedGuid, itemGuid } of pairs) {
+          const remote = doc.createElement('podcast:remoteItem');
+          remote.setAttribute('feedGuid', feedGuid);
+          remote.setAttribute('itemGuid', itemGuid);
+          item.appendChild(remote);
+        }
+        channel.appendChild(item);
+
+        const xml = new XMLSerializer().serializeToString(doc);
+        return formatXml(xml);
+      }
+
+      function formatXml(xml) {
+        // Simple pretty printer for readability
+        const PADDING = '  ';
+        const reg = /(>)(<)(\/*)/g;
+        let formatted = '';
+        let pad = 0;
+        xml = xml.replace(reg, '$1\n$2$3');
+        xml.split('\n').forEach((node) => {
+          if (node.match(/^\s*<\//)) pad -= 1;
+          formatted += PADDING.repeat(pad) + node + '\n';
+          if (node.match(/^\s*<[^!?][^>]*[^\/]>/) && !node.includes('</')) pad += 1;
+        });
+        return formatted.trim();
+      }
+
+      // GUID generator (RFC 4122 v4) using Web Crypto
+      function generateUUIDv4() {
+        const bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+        // Per RFC 4122 v4: set version and variant bits
+        bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        const hex = [...bytes].map(b => b.toString(16).padStart(2, '0'));
+        return (
+          hex.slice(0, 4).join('') + '-' +
+          hex.slice(4, 6).join('') + '-' +
+          hex.slice(6, 8).join('') + '-' +
+          hex.slice(8, 10).join('') + '-' +
+          hex.slice(10, 16).join('')
+        );
+      }
+
+      // Events
+      async function loadFeed() {
+        try {
+          setStatus('Loading…');
+          const xml = await fetchXml();
+          const doc = parseXml(xml);
+          populateFromDoc(doc);
+          setStatus('Loaded', 'success');
+        } catch (e) {
+          setStatus('Load failed: ' + (e?.message || e), 'warn');
+          throw e;
+        }
+      }
+
+      // removed: explicit load button; feed auto-loads on page open
+
+      el.btnPaste.addEventListener('click', async () => {
+        const xml = prompt('Paste XML here:');
+        if (!xml) return;
+        try {
+          const doc = parseXml(xml);
+          populateFromDoc(doc);
+          setStatus('Pasted XML loaded', 'success');
+        } catch (e) {
+          setStatus('Invalid XML', 'warn');
+        }
+      });
+
+      el.btnGenerate.addEventListener('click', () => {
+        try {
+          const xml = buildXml();
+          el.output.value = xml;
+          setStatus('XML generated', 'success');
+        } catch (e) {
+          setStatus('Generate failed: ' + (e?.message || e), 'warn');
+        }
+      });
+
+      el.btnDownload.addEventListener('click', () => {
+        const text = el.output.value.trim() || buildXml();
+        const blob = new Blob([text + '\n'], { type: 'application/xml' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'doerfel-verse-music.xml';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+
+      el.btnAddRow.addEventListener('click', () => addRow());
+      el.btnRemoveSelected.addEventListener('click', () => {
+        for (const tr of Array.from(el.itemsBody.querySelectorAll('tr'))) {
+          const cb = tr.querySelector('input[type="checkbox"]');
+          if (cb && cb.checked) tr.remove();
+        }
+      });
+
+      // Import Items from the currently loaded XML (useful after Paste XML)
+      el.btnImportCurrent.addEventListener('click', () => {
+        try {
+          if (!currentDoc) throw new Error('No XML loaded');
+          const ch = currentDoc.querySelector('channel');
+          if (!ch) throw new Error('Missing <channel>');
+          const feedGuid = (currentDoc.getElementsByTagName('podcast:guid')[0]?.textContent || '').trim();
+          if (!feedGuid) throw new Error('Missing podcast:guid in source feed');
+
+          const items = Array.from(currentDoc.getElementsByTagName('item'));
+          if (!items.length) throw new Error('No <item> elements found');
+
+          clearTable();
+          let count = 0;
+          for (const it of items) {
+            const g = (it.getElementsByTagName('guid')[0]?.textContent || '').trim();
+            if (g) { addRow(feedGuid, g); count++; }
+          }
+          setStatus(`Imported ${count} items from feed`, 'success');
+        } catch (e) {
+          setStatus('Import failed: ' + (e?.message || e), 'warn');
+        }
+      });
+
+      // Generate GUID on demand
+      el.btnGenGuid.addEventListener('click', () => {
+        el.podGuid.value = generateUUIDv4();
+        setStatus('New GUID generated', 'success');
+      });
+
+      // Set pubDate to now
+      el.btnNow.addEventListener('click', () => { el.pubDate.value = rfc822Now(); });
+
+      // If no GUID present, show a suggestion immediately
+      if (!el.podGuid.value) {
+        el.podGuid.value = generateUUIDv4();
+      }
+
+      // Auto-load the feed on page load for convenience. Falls back silently if not served over HTTP.
+      (async () => {
+        try {
+          await loadFeed();
+        } catch (_) {
+          // Likely opened as a file:// or without server; user can paste or start server
+        }
+      })();
+    </script>
+  </body>
+  </html>
+
+
