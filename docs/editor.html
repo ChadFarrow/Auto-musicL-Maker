@@ -56,6 +56,8 @@
     <h1>Playlist Feed Editor</h1>
 
     <div class="toolbar">
+      <input id="feedUrl" type="url" placeholder="https://feeds.rssblue.com/upbeats" style="flex:1;min-width:260px;" />
+      <button id="btnLoad">Load</button>
       <button id="btnPaste">Paste XML…</button>
       <button id="btnGenerate" class="primary">Generate XML</button>
       <button id="btnDownload">Download XML</button>
@@ -91,39 +93,14 @@
       </div>
     </div>
 
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;">
-        <h2 style="margin:0;">Items (podcast:remoteItem)</h2>
-        <div class="toolbar" style="margin:0;">
-          <button id="btnAddRow">Add Row</button>
-          <button id="btnRemoveSelected" class="danger">Remove Selected</button>
-          <button id="btnImportCurrent" title="Create rows from the currently loaded feed's items">Import Items from Feed</button>
-        </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th style="width:34px;">Sel</th>
-            <th>feedGuid</th>
-            <th>itemGuid</th>
-          </tr>
-        </thead>
-        <tbody id="itemsBody"></tbody>
-      </table>
-    </div>
+    
 
     <div class="card">
       <h2>Output</h2>
       <textarea id="output" class="mono" placeholder="Generated XML will appear here after you click Generate XML"></textarea>
     </div>
 
-    <div class="footer muted">
-      Tips:
-      <ul>
-        <li>Run a simple local server to avoid CORS when loading the XML (e.g., <span class="mono">python3 -m http.server</span> from repo root, then open <span class="mono">/docs/editor.html</span>).</li>
-        <li>This tool ensures a single <span class="mono">&lt;item&gt;</span> wrapper and preserves your <span class="mono">&lt;author&gt;</span> tag.</li>
-      </ul>
-    </div>
+    
 
     <script>
       const QS = (sel) => document.querySelector(sel);
@@ -136,17 +113,14 @@
         // removed: language, lastBuildDate inputs
         imageUrl: QS('#imageUrl'),
         podGuid: QS('#podGuid'),
-        itemsBody: QS('#itemsBody'),
         output: QS('#output'),
         status: QS('#status'),
-        // removed: btnLoad (auto-loads on page open)
+        btnLoad: QS('#btnLoad'),
+        feedUrl: QS('#feedUrl'),
         btnPaste: QS('#btnPaste'),
         btnGenerate: QS('#btnGenerate'),
         btnDownload: QS('#btnDownload'),
-        btnAddRow: QS('#btnAddRow'),
-        btnRemoveSelected: QS('#btnRemoveSelected'),
         btnGenGuid: QS('#btnGenGuid'),
-        btnImportCurrent: QS('#btnImportCurrent'),
         btnNow: QS('#btnNow'),
       };
 
@@ -159,30 +133,11 @@
         return new Date().toUTCString();
       }
 
-      function clearTable() { el.itemsBody.innerHTML = ''; }
+      function clearTable() {}
 
-      function addRow(feedGuid = '', itemGuid = '') {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><input type="checkbox" /></td>
-          <td><input type="text" value="${feedGuid}" class="mono" placeholder="feedGuid" /></td>
-          <td><input type="text" value="${itemGuid}" class="mono" placeholder="itemGuid" /></td>
-        `;
-        el.itemsBody.appendChild(tr);
-      }
+      function addRow() {}
 
-      function readRows() {
-        const rows = [];
-        for (const tr of el.itemsBody.querySelectorAll('tr')) {
-          const inputs = tr.querySelectorAll('input[type="text"]');
-          if (inputs.length >= 2) {
-            const feedGuid = inputs[0].value.trim();
-            const itemGuid = inputs[1].value.trim();
-            if (feedGuid && itemGuid) rows.push({ feedGuid, itemGuid });
-          }
-        }
-        return rows;
-      }
+      function readRows() { return []; }
 
       let currentDoc = null; // stores the last loaded/pasted XML Document
 
@@ -207,20 +162,15 @@
         // Read namespaced tag using tagName to avoid CSS selector colon issues
         el.podGuid.value = textByTag('podcast:guid');
 
-        clearTable();
-        // Collect all remoteItems across any <item> wrappers
-        const remoteItems = doc.getElementsByTagName('podcast:remoteItem');
-        for (const node of remoteItems) {
-          const feedGuid = node.getAttribute('feedGuid') || '';
-          const itemGuid = node.getAttribute('itemGuid') || '';
-          addRow(feedGuid, itemGuid);
-        }
-
-        setStatus(`Loaded ${remoteItems.length} entries`);
+        // Items UI removed; skip remoteItem table population
+        setStatus('Loaded');
       }
 
-      async function fetchXml() {
-        const res = await fetch('doerfel-verse-music.xml', { cache: 'no-store' });
+      async function fetchXmlFrom(urlStr) {
+        const u = new URL(window.location.origin);
+        // Prefer production serverless proxy when deployed, fallback to local dev route
+        const proxyPath = '/api/proxy';
+        const res = await fetch(`${proxyPath}?url=${encodeURIComponent(urlStr)}`, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.text();
       }
@@ -359,10 +309,12 @@
       }
 
       // Events
-      async function loadFeed() {
+      async function loadFeed(urlInput) {
         try {
           setStatus('Loading…');
-          const xml = await fetchXml();
+          const urlToLoad = (urlInput || el.feedUrl.value || '').trim();
+          if (!urlToLoad) throw new Error('Enter a feed URL');
+          const xml = await fetchXmlFrom(urlToLoad);
           const doc = parseXml(xml);
           populateFromDoc(doc);
           setStatus('Loaded', 'success');
@@ -372,7 +324,7 @@
         }
       }
 
-      // removed: explicit load button; feed auto-loads on page open
+      el.btnLoad.addEventListener('click', () => { loadFeed().catch(() => {}); });
 
       el.btnPaste.addEventListener('click', async () => {
         const xml = prompt('Paste XML here:');
@@ -406,37 +358,7 @@
         URL.revokeObjectURL(a.href);
       });
 
-      el.btnAddRow.addEventListener('click', () => addRow());
-      el.btnRemoveSelected.addEventListener('click', () => {
-        for (const tr of Array.from(el.itemsBody.querySelectorAll('tr'))) {
-          const cb = tr.querySelector('input[type="checkbox"]');
-          if (cb && cb.checked) tr.remove();
-        }
-      });
-
-      // Import Items from the currently loaded XML (useful after Paste XML)
-      el.btnImportCurrent.addEventListener('click', () => {
-        try {
-          if (!currentDoc) throw new Error('No XML loaded');
-          const ch = currentDoc.querySelector('channel');
-          if (!ch) throw new Error('Missing <channel>');
-          const feedGuid = (currentDoc.getElementsByTagName('podcast:guid')[0]?.textContent || '').trim();
-          if (!feedGuid) throw new Error('Missing podcast:guid in source feed');
-
-          const items = Array.from(currentDoc.getElementsByTagName('item'));
-          if (!items.length) throw new Error('No <item> elements found');
-
-          clearTable();
-          let count = 0;
-          for (const it of items) {
-            const g = (it.getElementsByTagName('guid')[0]?.textContent || '').trim();
-            if (g) { addRow(feedGuid, g); count++; }
-          }
-          setStatus(`Imported ${count} items from feed`, 'success');
-        } catch (e) {
-          setStatus('Import failed: ' + (e?.message || e), 'warn');
-        }
-      });
+      // Items UI removed
 
       // Generate GUID on demand
       el.btnGenGuid.addEventListener('click', () => {
@@ -452,13 +374,20 @@
         el.podGuid.value = generateUUIDv4();
       }
 
-      // Auto-load the feed on page load for convenience. Falls back silently if not served over HTTP.
-      (async () => {
-        try {
-          await loadFeed();
-        } catch (_) {
-          // Likely opened as a file:// or without server; user can paste or start server
+      // Preload logic: support ?url=<feed>&autoload=1 to auto-load a feed
+      (function initPreload() {
+        const params = new URLSearchParams(window.location.search);
+        const fromUrl = params.get('url');
+        const autoload = params.get('autoload');
+        // Do not preload by default. If a url param is present, just prefill the field.
+        if (fromUrl) {
+          el.feedUrl.value = fromUrl;
+          // Only auto-load when explicitly requested
+          if (autoload === '1' || autoload === 'true') {
+            loadFeed().catch(() => {});
+          }
         }
+        // No fallback default URL; leave input empty unless provided
       })();
     </script>
   </body>

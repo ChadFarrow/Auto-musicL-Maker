@@ -1,0 +1,84 @@
+{
+  "0": {
+    "id": 1,
+    "title": "RSS import + musicL playlist generator UI with XML download",
+    "description": "Update the Playlist Feed Editor to import external RSS feeds and generate a musicL playlist XML with editable fields and download capability.",
+    "status": "pending",
+    "priority": "high",
+    "details": "Target page: docs/editor.html (served at /playlist/maker). Allow entering an RSS URL (e.g., https://feeds.rssblue.com/upbeats), fetch via proxy to avoid CORS, parse channel fields and items, map to podcast:remoteItem entries (medium=\"music\"), allow edits, and provide Generate & Download XML. Preserve <author> and ensure a single <item> wrapper.",
+    "testStrategy": "Local: npm run dev → http://127.0.0.1:3007/playlist/maker. Load UpBeats feed, verify fields populate, import items, generate and download XML. Compare output to sample musicL structure and confirm author preservation and single <item> wrapper. Then deploy to Vercel and re-test live.",
+    "subtasks": [
+      {
+        "id": 1,
+        "title": "Add feed URL input + Load button in UI",
+        "description": "Add an input for RSS feed URL and a Load button above the toolbar in docs/editor.html.",
+        "status": "pending",
+        "details": "Wire to a loader that sets status and stores the parsed XML document in state (currentDoc). Keep existing 'Paste XML' flow working."
+      },
+      {
+        "id": 2,
+        "title": "Dev proxy endpoint to bypass CORS",
+        "description": "Create Express route /api/proxy that fetches a given ?url=... and returns text/xml.",
+        "status": "pending",
+        "details": "In server/index.js add GET /api/proxy that validates URL, fetches with node-fetch/https, sets appropriate content-type, blocks private IPs, and streams response."
+      },
+      {
+        "id": 3,
+        "title": "Vercel serverless proxy",
+        "description": "Add api/proxy.js serverless function for production fetch proxy and update vercel.json rewrites.",
+        "status": "pending",
+        "details": "Create api/proxy.js that fetches external RSS and returns XML with CORS headers. Update vercel.json to allow /api/proxy passthrough."
+      },
+      {
+        "id": 4,
+        "title": "Hook UI load to proxy and parse feed",
+        "description": "Call /api/proxy?url=<encoded> (or /api/proxy locally) then parse and populate fields.",
+        "status": "pending",
+        "details": "Populate Channel fields (author, title, description, link, pubDate, image.url, podcast:guid). Store the feedGuid for item imports."
+      },
+      {
+        "id": 5,
+        "title": "Import Items from Feed → remoteItem rows",
+        "description": "From currentDoc, map each <item><guid> to a row {feedGuid,itemGuid} using channel podcast:guid as feedGuid.",
+        "status": "pending",
+        "details": "Clear table then add rows. Show success status with count. Handle missing guid gracefully."
+      },
+      {
+        "id": 6,
+        "title": "Ensure musicL XML generation is correct",
+        "description": "Confirm generator sets podcast:medium=music, preserves <author>, and uses a single <item> wrapper aggregating podcast:remoteItem entries.",
+        "status": "pending",
+        "details": "Compare output to sample doerfel-verse-minimal-remote-items.xml. Pretty-print and keep namespace xmlns:podcast correct."
+      },
+      {
+        "id": 7,
+        "title": "Download XML UX",
+        "description": "Ensure Download XML saves .xml with sensible filename and always serializes latest state.",
+        "status": "pending",
+        "details": "Use Blob and object URL; default filename playlist.xml or derived from title."
+      },
+      {
+        "id": 8,
+        "title": "Docs & README updates",
+        "description": "Add usage instructions for URL import, local dev proxy, and deployment notes.",
+        "status": "pending",
+        "details": "Update README.md Tips section. Mention example feed and CORS note."
+      },
+      {
+        "id": 9,
+        "title": "Deploy & verify on Vercel",
+        "description": "Deploy and test /playlist/maker with RSS import, editing, generation, and download.",
+        "status": "pending",
+        "details": "Validate proxy function in production and end-to-end behavior."
+      }
+    ]
+  },
+  "feature-rss-import": {
+    "tasks": [],
+    "metadata": {
+      "created": "2025-08-09T16:49:17.809Z",
+      "updated": "2025-08-09T16:49:17.810Z",
+      "description": "RSS import + musicL playlist generator (Vercel)"
+    }
+  }
+}
