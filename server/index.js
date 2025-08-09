@@ -6,9 +6,15 @@ const PORT = process.env.PORT || 3007;
 
 const docsDir = path.resolve(__dirname, '../docs');
 app.use(express.static(docsDir));
+// Also serve docs under /playlist/* so relative asset paths match production
+app.use('/playlist', express.static(docsDir));
 
 app.get('/playlist/maker', (req, res) => {
   res.sendFile(path.join(docsDir, 'editor.html'));
+});
+
+app.get('/playlist', (_req, res) => {
+  res.redirect('/playlist/maker');
 });
 
 app.get('/', (_req, res) => {
