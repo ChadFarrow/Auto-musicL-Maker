@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Playlist Feed Editor</title>
+    <title>Auto musicL Maker</title>
     <style>
       :root { color-scheme: light dark; }
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; line-height: 1.4; }
@@ -53,7 +53,7 @@
     </style>
   </head>
   <body>
-    <h1>Playlist Feed Editor</h1>
+    <h1>Auto musicL Maker</h1>
 
     <div class="toolbar">
       <input id="feedUrl" type="url" placeholder="https://example.com/feed.xml" style="flex:1;min-width:260px;" />
@@ -65,10 +65,10 @@
 
     <div class="card">
       <h2>Channel</h2>
-      <div class="row"><label for="author">Author</label><input id="author" type="text" placeholder="ChadF" /></div>
+      <div class="row"><label for="author">Author (person making the playlist)</label><input id="author" type="text" placeholder="ChadF" /></div>
       <div class="row"><label for="title">Title</label><input id="title" type="text" /></div>
       <div class="row"><label for="description">Description</label><textarea id="description"></textarea></div>
-      <div class="row"><label for="link">Link</label><input id="link" type="url" placeholder="https://example.com/" /></div>
+      
       <div class="row"><label for="pubDate">Playlist Date (pubDate)</label>
         <div style="display:flex; gap:8px; align-items:center;">
           <input id="pubDate" type="text" class="mono" placeholder="Fri, 08 Aug 2025 03:06:58 GMT" />
@@ -107,7 +107,7 @@
         author: QS('#author'),
         title: QS('#title'),
         description: QS('#description'),
-        link: QS('#link'),
+        
         pubDate: QS('#pubDate'),
         // removed: language, lastBuildDate inputs
         imageUrl: QS('#imageUrl'),
@@ -138,6 +138,7 @@
       function readRows() { return []; }
 
       let currentDoc = null; // stores the last loaded/pasted XML Document
+      let feedLinkOriginal = '';
 
       function populateFromDoc(doc) {
         const channel = doc.querySelector('channel');
@@ -154,7 +155,7 @@
         el.author.value = text('author');
         el.title.value = text('title');
         el.description.value = text('description');
-        el.link.value = text('link');
+        feedLinkOriginal = text('link');
         el.pubDate.value = text('pubDate');
         el.imageUrl.value = channel.querySelector('image > url')?.textContent?.trim() || '';
         // Read namespaced tag using tagName to avoid CSS selector colon issues
@@ -240,7 +241,7 @@
         appendText('author', el.author.value.trim());
         appendText('title', el.title.value.trim());
         appendText('description', el.description.value.trim());
-        appendText('link', el.link.value.trim());
+        appendText('link', feedLinkOriginal);
         // Optional: default language and updated dates
         appendText('language', 'en');
         appendText('pubDate', el.pubDate.value.trim() || rfc822Now());
