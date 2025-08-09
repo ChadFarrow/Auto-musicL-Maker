@@ -56,9 +56,8 @@
     <h1>Playlist Feed Editor</h1>
 
     <div class="toolbar">
-      <input id="feedUrl" type="url" placeholder="https://feeds.rssblue.com/upbeats" style="flex:1;min-width:260px;" />
+      <input id="feedUrl" type="url" placeholder="https://example.com/feed.xml" style="flex:1;min-width:260px;" />
       <button id="btnLoad">Load</button>
-      <button id="btnPaste">Paste XML…</button>
       <button id="btnGenerate" class="primary">Generate XML</button>
       <button id="btnDownload">Download XML</button>
       <span id="status" class="muted"></span>
@@ -97,7 +96,7 @@
 
     <div class="card">
       <h2>Output</h2>
-      <textarea id="output" class="mono" placeholder="Generated XML will appear here after you click Generate XML"></textarea>
+      <pre id="output" class="mono" style="white-space: pre; overflow: visible;"></pre>
     </div>
 
     
@@ -117,7 +116,6 @@
         status: QS('#status'),
         btnLoad: QS('#btnLoad'),
         feedUrl: QS('#feedUrl'),
-        btnPaste: QS('#btnPaste'),
         btnGenerate: QS('#btnGenerate'),
         btnDownload: QS('#btnDownload'),
         btnGenGuid: QS('#btnGenGuid'),
@@ -258,18 +256,49 @@
         imgChild('url', el.imageUrl.value.trim());
         if (image.childNodes.length > 0) channel.appendChild(image);
 
-        appendText('podcast:medium', 'music');
+        appendText('podcast:medium', 'musicL');
         appendText('podcast:guid', el.podGuid.value.trim() || generateUUIDv4());
 
         // Ensure single <item> wrapper and add all remoteItem entries
         const item = doc.createElement('item');
-        const pairs = readRows();
-        for (const { feedGuid, itemGuid } of pairs) {
-          const remote = doc.createElement('podcast:remoteItem');
-          remote.setAttribute('feedGuid', feedGuid);
-          remote.setAttribute('itemGuid', itemGuid);
-          item.appendChild(remote);
-        }
+        // Prefer all podcast:remoteItem entries found in the source feed (tracks within episodes)
+        try {
+          const seenKey = new Set();
+          if (currentDoc) {
+            const remotes = Array.from(currentDoc.getElementsByTagName('podcast:remoteItem'));
+            for (const r of remotes) {
+              const fg = r.getAttribute('feedGuid')?.trim();
+              const ig = r.getAttribute('itemGuid')?.trim();
+              if (!fg || !ig) continue;
+              const key = fg + '::' + ig;
+              if (seenKey.has(key)) continue;
+              seenKey.add(key);
+              const remote = doc.createElement('podcast:remoteItem');
+              remote.setAttribute('feedGuid', fg);
+              remote.setAttribute('itemGuid', ig);
+              item.appendChild(remote);
+            }
+            // Fallback: if none found, include episode GUIDs as before
+            if (remotes.length === 0) {
+              const ch = currentDoc.querySelector('channel');
+              const feedGuid = (currentDoc.getElementsByTagName('podcast:guid')[0]?.textContent || '').trim();
+              if (ch && feedGuid) {
+                const directItems = Array.from(ch.children).filter(n => n.tagName && n.tagName.toLowerCase() === 'item');
+                const seen = new Set();
+                for (const it of directItems) {
+                  const guidNode = it.querySelector('guid');
+                  const g = (guidNode?.textContent || '').trim();
+                  if (!g || seen.has(g)) continue;
+                  seen.add(g);
+                  const remote = doc.createElement('podcast:remoteItem');
+                  remote.setAttribute('feedGuid', feedGuid);
+                  remote.setAttribute('itemGuid', g);
+                  item.appendChild(remote);
+                }
+              }
+            }
+          }
+        } catch (_) { /* ignore */ }
         channel.appendChild(item);
 
         const xml = new XMLSerializer().serializeToString(doc);
@@ -326,22 +355,22 @@
 
       el.btnLoad.addEventListener('click', () => { loadFeed().catch(() => {}); });
 
-      el.btnPaste.addEventListener('click', async () => {
-        const xml = prompt('Paste XML here:');
-        if (!xml) return;
-        try {
-          const doc = parseXml(xml);
-          populateFromDoc(doc);
-          setStatus('Pasted XML loaded', 'success');
-        } catch (e) {
-          setStatus('Invalid XML', 'warn');
+      // Hitting Enter in the feed URL field triggers Load
+      el.feedUrl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          loadFeed().catch(() => {});
         }
       });
+
+      // File uploader removed
+
+      // Paste XML UI removed
 
       el.btnGenerate.addEventListener('click', () => {
         try {
           const xml = buildXml();
-          el.output.value = xml;
+          el.output.textContent = xml;
           setStatus('XML generated', 'success');
         } catch (e) {
           setStatus('Generate failed: ' + (e?.message || e), 'warn');
@@ -349,7 +378,7 @@
       });
 
       el.btnDownload.addEventListener('click', () => {
-        const text = el.output.value.trim() || buildXml();
+        const text = (el.output.textContent || '').trim() || buildXml();
         const blob = new Blob([text + '\n'], { type: 'application/xml' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
