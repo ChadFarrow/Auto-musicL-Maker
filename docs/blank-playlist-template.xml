@@ -17,20 +17,20 @@
 -->
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
-    <author>[AUTHOR_NAME]</author>
-    <title>[PLAYLIST_NAME]</title>
-    <description>[DESCRIPTION]</description>
-    <link>[WEBSITE_URL]</link>
-    <podcast:txt purpose="source-feed">[SOURCE_FEED_URL]</podcast:txt>
-    <language>[LANGUAGE_CODE]</language>
-    <pubDate>[CURRENT_UTC_DATE]</pubDate>
-    <lastBuildDate>[CURRENT_UTC_DATE]</lastBuildDate>
+    <author>[1-AUTHOR_NAME]</author>
+    <title>[2-PLAYLIST_NAME]</title>
+    <description>[3-DESCRIPTION]</description>
+    <link>[4-WEBSITE_URL]</link>
+    <podcast:txt purpose="source-feed">[5-SOURCE_FEED_URL]</podcast:txt>
+    <language>[6-LANGUAGE_CODE]</language>
+    <pubDate>[7-CURRENT_UTC_DATE]</pubDate>
+    <lastBuildDate>[7-CURRENT_UTC_DATE]</lastBuildDate>
     <image>
-      <url>[IMAGE_URL]</url>
+      <url>[8-IMAGE_URL]</url>
     </image>
     <podcast:medium>musicL</podcast:medium>
-    <podcast:guid>[GENERATED_UUID]</podcast:guid>
-    <podcast:remoteItem feedGuid="[FEED_GUID]" itemGuid="[ITEM_GUID]" />
+    <podcast:guid>[9-GENERATED_UUID]</podcast:guid>
+    <podcast:remoteItem feedGuid="[10-FEED_GUID]" itemGuid="[10-ITEM_GUID]" />
     <!-- Add more remote items as needed -->
   </channel>
 </rss>
