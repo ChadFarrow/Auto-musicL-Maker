@@ -12,8 +12,8 @@
   7. Replace [CURRENT_UTC_DATE] with current date in UTC format
   8. Replace [GENERATED_UUID] with a unique UUID (use online UUID generator)
   9. Replace [FEED_GUID] and [ITEM_GUID] with actual GUIDs from your source feed
-  10. Add more <podcast:remoteItem> entries as needed
-  11. Optionally add an image URL in the <image><url></url> section
+  10. Replace [IMAGE_URL] with your playlist image URL (optional - leave empty if no image)
+  11. Add more <podcast:remoteItem> entries as needed
 -->
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
@@ -26,7 +26,7 @@
     <pubDate>[CURRENT_UTC_DATE]</pubDate>
     <lastBuildDate>[CURRENT_UTC_DATE]</lastBuildDate>
     <image>
-      <url></url>
+      <url>[IMAGE_URL]</url>
     </image>
     <podcast:medium>musicL</podcast:medium>
     <podcast:guid>[GENERATED_UUID]</podcast:guid>
