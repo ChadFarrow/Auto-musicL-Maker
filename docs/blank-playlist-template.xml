@@ -1,9 +1,24 @@
+<!-- 
+  BLANK PLAYLIST TEMPLATE FOR AUTO-MUSICL-MAKER
+  Repository: https://github.com/ChadFarrow/Auto-musicL-Maker
+  
+  Instructions:
+  1. Replace [PLAYLIST_NAME] with your playlist title
+  2. Replace [DESCRIPTION] with your playlist description  
+  3. Replace [WEBSITE_URL] with the source website URL
+  4. Replace [CURRENT_UTC_DATE] with current date in UTC format
+  5. Replace [GENERATED_UUID] with a unique UUID (use online UUID generator)
+  6. Replace [FEED_GUID] and [ITEM_GUID] with actual GUIDs from your source feed
+  7. Add more <podcast:remoteItem> entries as needed
+  8. Optionally add an image URL in the <image><url></url> section
+-->
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <author>ChadF</author>
     <title>[PLAYLIST_NAME] Music Playlist</title>
     <description>[DESCRIPTION]</description>
     <link>[WEBSITE_URL]</link>
+    <podcast:txt purpose="source-feed">[SOURCE_FEED_URL]</podcast:txt>
     <language>en</language>
     <pubDate>[CURRENT_UTC_DATE]</pubDate>
     <lastBuildDate>[CURRENT_UTC_DATE]</lastBuildDate>
