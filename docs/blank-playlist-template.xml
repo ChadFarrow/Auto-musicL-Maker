@@ -17,19 +17,30 @@
 -->
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
+    <!-- Basic RSS channel information -->
     <author>[AUTHOR_NAME]</author>
     <title>[PLAYLIST_NAME]</title>
     <description>[DESCRIPTION]</description>
     <link>[WEBSITE_URL]</link>
+    
+    <!-- Source feed attribution -->
     <podcast:txt purpose="source-feed">[SOURCE_FEED_URL]</podcast:txt>
+    
+    <!-- Channel metadata -->
     <language>[LANGUAGE_CODE]</language>
     <pubDate>[CURRENT_UTC_DATE]</pubDate>
     <lastBuildDate>[CURRENT_UTC_DATE]</lastBuildDate>
+    
+    <!-- Playlist artwork -->
     <image>
       <url>[IMAGE_URL]</url>
     </image>
+    
+    <!-- Podcasting 2.0 musicL specific tags -->
     <podcast:medium>musicL</podcast:medium>
     <podcast:guid>[GENERATED_UUID]</podcast:guid>
+    
+    <!-- Remote items from source feed -->
     <podcast:remoteItem feedGuid="[FEED_GUID]" itemGuid="[ITEM_GUID]" />
     <!-- Add more remote items as needed -->
   </channel>
