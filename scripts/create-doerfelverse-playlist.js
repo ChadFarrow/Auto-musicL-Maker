@@ -20,12 +20,12 @@ const { DOMParser } = require('xmldom');
  * - [FUNCTION_NAME] → Function name (camelCase)
  */
 
-async function create[FUNCTION_NAME]Playlist() {
+async function createDoerfelversePlaylist() {
   try {
-    console.log('🎵 Creating [PLAYLIST_NAME] musicL playlist...');
+    console.log('🎵 Creating Into The Doerfel-Verse musicL playlist...');
     
     // REPLACE: Your RSS feed URL
-    const feedUrl = '[FEED_URL]';
+    const feedUrl = 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml';
     console.log(`📡 Fetching feed: ${feedUrl}`);
     
     const xmlData = await fetchRawXML(feedUrl);
@@ -58,10 +58,10 @@ async function create[FUNCTION_NAME]Playlist() {
     const xml = generatePlaylistFromRemoteItems(remoteItems);
     
     // REPLACE: Your output filename
-    const outputPath = path.join(__dirname, '../docs/[FILENAME]-playlist.xml');
+    const outputPath = path.join(__dirname, '../docs/doerfelverse-playlist.xml');
     fs.writeFileSync(outputPath, xml, 'utf8');
     
-    console.log(`🎉 [PLAYLIST_NAME] playlist created successfully!`);
+    console.log(`🎉 Into The Doerfel-Verse playlist created successfully!`);
     console.log(`📁 File: ${outputPath}`);
     console.log(`🎵 Tracks: ${remoteItems.length}`);
     
@@ -78,10 +78,10 @@ function generatePlaylistFromRemoteItems(remoteItems) {
   let xml = `<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <author>ChadF</author>
-    <title>[PLAYLIST_NAME] Music Playlist</title>
-    <description>[DESCRIPTION]</description>
-    <link>[WEBSITE_URL]</link>
-    <podcast:txt purpose="source-feed">[FEED_URL]</podcast:txt>
+    <title>Into The Doerfel-Verse Music Playlist</title>
+    <description>Music tracks from Into The Doerfel-Verse podcast featuring The Doerfels band and Value4Value artists</description>
+    <link>https://www.doerfelverse.com/</link>
+    <podcast:txt purpose="source-feed">https://www.doerfelverse.com/feeds/intothedoerfelverse.xml</podcast:txt>
     <language>en</language>
     <pubDate>${now}</pubDate>
     <lastBuildDate>${now}</lastBuildDate>
@@ -129,7 +129,7 @@ function generateUUIDv4() {
 
 // Run the script
 if (require.main === module) {
-  create[FUNCTION_NAME]Playlist()
+  createDoerfelversePlaylist()
     .then(() => {
       console.log('✅ Script completed successfully');
       process.exit(0);
@@ -140,4 +140,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { create[FUNCTION_NAME]Playlist };
+module.exports = { createDoerfelversePlaylist };
