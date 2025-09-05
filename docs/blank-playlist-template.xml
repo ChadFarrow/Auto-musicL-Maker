@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <author>ChadF</author>
+    <title>[PLAYLIST_NAME] Music Playlist</title>
+    <description>[DESCRIPTION]</description>
+    <link>[WEBSITE_URL]</link>
+    <language>en</language>
+    <pubDate>[CURRENT_UTC_DATE]</pubDate>
+    <lastBuildDate>[CURRENT_UTC_DATE]</lastBuildDate>
+    <image>
+      <url></url>
+    </image>
+    <podcast:medium>musicL</podcast:medium>
+    <podcast:guid>[GENERATED_UUID]</podcast:guid>
+    <podcast:remoteItem feedGuid="[FEED_GUID]" itemGuid="[ITEM_GUID]" />
+    <!-- Add more remote items as needed -->
+  </channel>
+</rss>

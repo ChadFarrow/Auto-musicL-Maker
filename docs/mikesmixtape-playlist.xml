@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:podcast="https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md">
+<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <author>ChadF</author>
     <title>Mike's Mix Tape Music Playlist</title>
@@ -9,7 +9,7 @@
     <pubDate>Fri, 05 Sep 2025 14:55:17 GMT</pubDate>
     <lastBuildDate>Fri, 05 Sep 2025 14:55:17 GMT</lastBuildDate>
     <image>
-      <url></url>
+      <url>https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/main/docs/MMT-playlist-art.webp</url>
     </image>
     <podcast:medium>musicL</podcast:medium>
     <podcast:guid>8a9e6834-f8cc-4b85-ac85-2cc718f6d04f</podcast:guid>
