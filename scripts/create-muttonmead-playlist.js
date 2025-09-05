@@ -19,8 +19,7 @@ function generatePlaylistFromRemoteItems(feedData, remoteItems) {
   const now = new Date().toUTCString();
   const playlistGuid = generateUUIDv4();
   
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  let xml = `<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <author>ChadF</author>
     <title>Mutton, Mead & Music Playlist</title>

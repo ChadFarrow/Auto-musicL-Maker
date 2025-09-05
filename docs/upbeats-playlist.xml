@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <title>UpBeats Music Playlist</title>
@@ -6,13 +5,13 @@
     <author>Auto musicL Maker</author>
     <link>https://upbeatspodcast.com/</link>
     <language>en</language>
-    <pubDate>Fri, 05 Sep 2025 20:32:32 GMT</pubDate>
-    <lastBuildDate>Fri, 05 Sep 2025 20:32:32 GMT</lastBuildDate>
+    <pubDate>Fri, 05 Sep 2025 22:33:52 GMT</pubDate>
+    <lastBuildDate>Fri, 05 Sep 2025 22:33:52 GMT</lastBuildDate>
     <image>
       <url></url>
     </image>
     <podcast:medium>musicL</podcast:medium>
-    <podcast:guid>a17a063a-e27a-4d9a-aa2a-fe60115d516c</podcast:guid>
+    <podcast:guid>c9048fd9-0fa8-4bbf-86da-fb947dc8ef57</podcast:guid>
     <podcast:remoteItem feedGuid="491f0833-a80c-5911-93e9-baaaa4a58494" itemGuid="40e9def1-f84f-4a88-b4e1-7dfee8fffedf" />
     <podcast:remoteItem feedGuid="92fc540c-79ce-55b5-9dd8-b5bad9f94d7a" itemGuid="623c0f13-72b7-5920-9c4f-abe0e31e1059" />
     <podcast:remoteItem feedGuid="05eaeb68-1d19-5f15-afb6-06aeba50381b" itemGuid="e2d601b3-9644-4f36-abe4-cdce444bc9f2" />

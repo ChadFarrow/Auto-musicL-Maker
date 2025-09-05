@@ -3,12 +3,11 @@ const fs = require('fs');
 const path = require('path');
 const { DOMParser } = require('xmldom');
 
-async function createHomegrownHitsPlaylist() {
+async function createDoerfelversePlaylist() {
   try {
-    console.log('🎵 Creating Homegrown Hits musicL playlist...');
+    console.log('🎵 Creating Into The Doerfel-Verse musicL playlist...');
     
-    // Fetch the RSS feed
-    const feedUrl = 'https://feed.homegrownhits.xyz/feed.xml';
+    const feedUrl = 'https://www.doerfelverse.com/feeds/intothedoerfelverse.xml';
     console.log(`📡 Fetching feed: ${feedUrl}`);
     
     const xmlData = await fetchRawXML(feedUrl);
@@ -37,19 +36,32 @@ async function createHomegrownHitsPlaylist() {
     
     console.log(`✅ Extracted ${remoteItems.length} valid remote items`);
     
-    // Generate UUID for the playlist
-    const playlistGuid = generateUUID();
-    
-    // Get current date
-    const now = new Date().toUTCString();
-    
     // Generate the musicL XML
-    let xml = `<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+    const xml = generatePlaylistFromRemoteItems(remoteItems);
+    
+    const outputPath = path.join(__dirname, '../docs/doerfelverse-playlist.xml');
+    fs.writeFileSync(outputPath, xml, 'utf8');
+    
+    console.log(`🎉 Into The Doerfel-Verse playlist created successfully!`);
+    console.log(`📁 File: ${outputPath}`);
+    console.log(`🎵 Tracks: ${remoteItems.length}`);
+    
+  } catch (error) {
+    console.error('❌ Error creating playlist:', error.message);
+    throw error;
+  }
+}
+
+function generatePlaylistFromRemoteItems(remoteItems) {
+  const now = new Date().toUTCString();
+  const playlistGuid = generateUUIDv4();
+
+  let xml = `<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <author>ChadF</author>
-    <title>Homegrown Hits Music Playlist</title>
-    <description>Curated playlist from Homegrown Hits podcast featuring Value4Value independent artists</description>
-    <link>https://homegrownhits.xyz/</link>
+    <title>Into The Doerfel-Verse Music Playlist</title>
+    <description>Music tracks from Into The Doerfel-Verse podcast featuring The Doerfels band and Value4Value artists</description>
+    <link>https://www.doerfelverse.com/</link>
     <language>en</language>
     <pubDate>${now}</pubDate>
     <lastBuildDate>${now}</lastBuildDate>
@@ -59,28 +71,16 @@ async function createHomegrownHitsPlaylist() {
     <podcast:medium>musicL</podcast:medium>
     <podcast:guid>${playlistGuid}</podcast:guid>
 `;
-    
-    // Add all remote items
-    remoteItems.forEach(item => {
-      xml += `    <podcast:remoteItem feedGuid="${item.feedGuid}" itemGuid="${item.itemGuid}" />
+
+  remoteItems.forEach(item => {
+    xml += `    <podcast:remoteItem feedGuid="${item.feedGuid}" itemGuid="${item.itemGuid}" />
 `;
-    });
-    
-    xml += `  </channel>
+  });
+
+  xml += `  </channel>
 </rss>`;
-    
-    // Write to file
-    const outputPath = path.join(__dirname, '../docs/homegrownhits-playlist.xml');
-    fs.writeFileSync(outputPath, xml, 'utf8');
-    
-    console.log(`🎉 Homegrown Hits playlist created successfully!`);
-    console.log(`📁 File: ${outputPath}`);
-    console.log(`🎵 Tracks: ${remoteItems.length}`);
-    
-  } catch (error) {
-    console.error('❌ Error creating playlist:', error.message);
-    throw error;
-  }
+
+  return xml;
 }
 
 function fetchRawXML(url) {
@@ -99,7 +99,7 @@ function fetchRawXML(url) {
   });
 }
 
-function generateUUID() {
+function generateUUIDv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     const r = Math.random() * 16 | 0;
     const v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -109,7 +109,7 @@ function generateUUID() {
 
 // Run the script
 if (require.main === module) {
-  createHomegrownHitsPlaylist()
+  createDoerfelversePlaylist()
     .then(() => {
       console.log('✅ Script completed successfully');
       process.exit(0);
@@ -120,4 +120,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { createHomegrownHitsPlaylist };
+module.exports = { createDoerfelversePlaylist };

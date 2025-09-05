@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  <channel>
+    <author>ChadF</author>
+    <title>Into The Doerfel-Verse Music Playlist</title>
+    <description>Curated playlist from Into The Doerfel-Verse podcast featuring The Doerfels and Value4Value music</description>
+    <link>https://www.doerfelverse.com/</link>
+    <language>en</language>
+    <pubDate>Thu, 05 Sep 2025 18:30:00 GMT</pubDate>
+    <lastBuildDate>Thu, 05 Sep 2025 18:30:00 GMT</lastBuildDate>
+    <image>
+      <url>https://www.doerfelverse.com/art/itdvchadf.png</url>
+    </image>
+    <podcast:medium>musicL</podcast:medium>
+    <podcast:guid>a7cf151d-a31c-44e6-bd8a-3732faedbd10</podcast:guid>
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="c1eb88dd-289a-4aa7-94c2-d61091987d5c" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="d04e4724-c653-4b62-937b-6af21f85e554" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="0b115499-c1c4-4b30-8386-02690a6d2956" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="545d1c9e-e1f7-49de-af8c-b469ed503245" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="61b2ef47-18a4-4fcc-b750-8e09460bb85e" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="de2b4ba2-17cb-43b3-915d-e5d684f721a8" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="6570c0b1-fa57-4cad-9466-b0f2fab083cb" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="92207c60-da47-4e03-af62-3c47503b7c01" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="a0830159-5dda-4415-949b-fb7615961a87" />
+    <podcast:remoteItem feedGuid="41aace28-8679-5ef1-9958-75cf76c2b5f0" itemGuid="f81fdd33-3fa4-4227-b9ee-4dd1b5e96b2d" />
+  </channel>
+</rss>

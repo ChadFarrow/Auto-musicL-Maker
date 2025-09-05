@@ -68,8 +68,7 @@ function generatePlaylist(feedData, allArtists) {
   // Remove duplicates
   const uniqueArtists = [...new Set(allArtists)];
 
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  let xml = `<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <title>UpBeats Music Playlist</title>
     <description>Curated playlist from UpBeats podcast featuring independent artists</description>
@@ -100,8 +99,7 @@ function generatePlaylistFromRemoteItems(feedData, remoteItems) {
   const now = new Date().toUTCString();
   const playlistGuid = generateUUIDv4();
   
-  let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
+  let xml = `<rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <title>UpBeats Music Playlist</title>
     <description>Curated playlist from UpBeats podcast featuring independent artists</description>

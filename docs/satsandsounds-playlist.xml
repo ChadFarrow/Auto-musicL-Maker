@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <title>Sats and Sounds Music Playlist</title>
@@ -6,13 +5,13 @@
     <author>Auto musicL Maker</author>
     <link>https://satsandsounds.com/</link>
     <language>en</language>
-    <pubDate>Fri, 05 Sep 2025 20:32:35 GMT</pubDate>
-    <lastBuildDate>Fri, 05 Sep 2025 20:32:35 GMT</lastBuildDate>
+    <pubDate>Fri, 05 Sep 2025 22:33:54 GMT</pubDate>
+    <lastBuildDate>Fri, 05 Sep 2025 22:33:54 GMT</lastBuildDate>
     <image>
       <url></url>
     </image>
     <podcast:medium>musicL</podcast:medium>
-    <podcast:guid>aa2a425f-2f17-4638-8933-26677c219932</podcast:guid>
+    <podcast:guid>7908ec92-d3cd-4b20-b044-ba163b86aa4c</podcast:guid>
     <podcast:remoteItem feedGuid="6f9a16c9-24ac-5569-a713-ea5ef75ebfcf" itemGuid="e12a33e8-576a-47c2-aa06-a1c0b494185d" />
     <podcast:remoteItem feedGuid="c4d2997f-91d9-54a8-b8f3-cab35c96b5c4" itemGuid="1f11f311-f2d0-4eca-b993-9206af4253f2" />
     <podcast:remoteItem feedGuid="9ae53019-ee13-527e-890c-733629467b94" itemGuid="8ed6794a-3a2b-4803-b702-eaf8fcb29fc5" />
