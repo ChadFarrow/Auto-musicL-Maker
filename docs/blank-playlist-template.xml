@@ -10,9 +10,9 @@
   5. Replace [SOURCE_FEED_URL] with the RSS feed URL
   6. Replace [LANGUAGE_CODE] with your language code (e.g., 'en', 'es', 'fr', 'de')
   7. Replace [CURRENT_UTC_DATE] with current date in UTC format (when the feed was created)
-  8. Replace [GENERATED_UUID] with a unique UUID (use online UUID generator)
-  9. Replace [FEED_GUID] and [ITEM_GUID] with actual GUIDs from your source feed
-  10. Replace [IMAGE_URL] with your playlist image URL (optional - leave empty if no image)
+  8. Replace [IMAGE_URL] with your playlist image URL (optional - leave empty if no image)
+  9. Replace [GENERATED_UUID] with a unique UUID (use online UUID generator)
+  10. Replace [FEED_GUID] and [ITEM_GUID] with actual GUIDs from your source feed
   11. Add more <podcast:remoteItem> entries as needed
 -->
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
