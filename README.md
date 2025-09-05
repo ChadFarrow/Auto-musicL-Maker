@@ -26,11 +26,16 @@ Live: https://auto-music-l-maker.vercel.app/playlist/maker
 ### How to Use
 1. Paste an XML feed URL into the box
 2. Click Load or press Enter
-3. Enter Author, Title, Description, Image URL
-4. If this is a new feed click "Generate GUID"
-5. Click Generate XML
-6. The generated XML appears in the Output section
-7. Click Download XML to save the playlist
+3. Fill in all playlist details:
+   - Author, Title, Description
+   - Website URL (link)
+   - Language Code (defaults to 'en')
+   - Playlist Date and Last Build Date (use "Now" buttons)
+   - Image URL (optional)
+   - GUID (click "Generate GUID" for new feeds)
+4. Click Generate XML
+5. The generated XML appears in the Output section
+6. Click Download XML to save the playlist
 
 ## 🔧 Automated Playlist Generation
 
@@ -39,12 +44,13 @@ Live: https://auto-music-l-maker.vercel.app/playlist/maker
 - `node scripts/create-doerfelverse-playlist.js` - Example script for generating Into The Doerfel-Verse playlist
 
 ### Features
-- Automatically extracts existing `podcast:remoteItem` elements from source feeds
-- Generates RFC 4122 v4 UUIDs for playlist and item GUIDs
-- Standardized XML structure with `<author>` at top, `<image>` above `<podcast:medium>`
-- Source feed attribution via `<podcast:txt purpose="source-feed">` tags
-- Consistent formatting across all playlists
-- No XML declaration (clean RSS format)
+- **Complete Field Control**: Input fields for all playlist metadata (author, title, description, website URL, language, dates, image, GUID)
+- **Automatic Extraction**: Extracts existing `podcast:remoteItem` elements from source feeds
+- **Smart Defaults**: Auto-generates UUIDs, dates, and language codes with user override capability
+- **Source Attribution**: Includes `<podcast:txt purpose="source-feed">` tags for proper attribution
+- **Standards Compliant**: Follows Podcasting 2.0 musicL specifications
+- **Clean Output**: No XML declaration, proper RSS 2.0 format
+- **Consistent Structure**: Same XML structure across web interface, templates, and scripts
 
 ## 📝 Technical Notes
 - The app preserves the original channel `<link>` from the source feed
