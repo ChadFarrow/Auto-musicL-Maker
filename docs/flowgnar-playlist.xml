@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
-    <author>ChadF</author>
     <title>Flowgnar Music Playlist</title>
     <description>Curated playlist from Flowgnar podcast featuring outdoor adventure music</description>
+    <author>Auto musicL Maker</author>
     <link>https://flowgnar.com/</link>
     <language>en</language>
-    <pubDate>Fri, 05 Sep 2025 13:04:11 GMT</pubDate>
-    <lastBuildDate>Fri, 05 Sep 2025 13:04:11 GMT</lastBuildDate>
+    <pubDate>Fri, 05 Sep 2025 20:32:34 GMT</pubDate>
+    <lastBuildDate>Fri, 05 Sep 2025 20:32:34 GMT</lastBuildDate>
     <image>
-      <url>https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/main/docs/flowgnar-playlist-art.webp</url>
+      <url></url>
     </image>
     <podcast:medium>musicL</podcast:medium>
-    <podcast:guid>9ceefd27-f61b-40fe-a4bd-56d969329f57</podcast:guid>
+    <podcast:guid>5e7a37d3-1965-4ea9-96a6-2ab302c23a67</podcast:guid>
     <podcast:remoteItem feedGuid="6782774c-17e1-5f60-821f-93a9d5296da7" itemGuid="68d3400b-6527-4b3d-a995-d5fd6a628a47" />
     <podcast:remoteItem feedGuid="8d0c0bd8-6daa-50fd-8d02-026f51801c3c" itemGuid="dca4eb0a-77d4-4bc0-8c86-89c5db0f8c5c" />
     <podcast:remoteItem feedGuid="f539b53c-0a74-50cb-9b41-caf2f7976544" itemGuid="15955a2c-206c-5a58-9f62-12f2aa0ddd1c" />

@@ -6,13 +6,13 @@
     <description>Curated playlist from Behind the Sch3m3s podcast featuring independent artists</description>
     <link>https://music.behindthesch3m3s.com/</link>
     <language>en</language>
-    <pubDate>Fri, 05 Sep 2025 14:32:45 GMT</pubDate>
-    <lastBuildDate>Fri, 05 Sep 2025 14:32:45 GMT</lastBuildDate>
+    <pubDate>Fri, 05 Sep 2025 20:32:36 GMT</pubDate>
+    <lastBuildDate>Fri, 05 Sep 2025 20:32:36 GMT</lastBuildDate>
     <image>
-      <url>https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/main/docs/b4ts-playlist-art.webp</url>
+      <url></url>
     </image>
     <podcast:medium>musicL</podcast:medium>
-    <podcast:guid>f716ed8c-6cb5-4452-a498-6ed5974bccb7</podcast:guid>
+    <podcast:guid>95a575af-c01b-4c2c-8d13-27183e10bd1d</podcast:guid>
     <podcast:remoteItem feedGuid="b6b2aa32-c3f4-59b4-a8b3-26ffb3f1eb9b" itemGuid="64bf9981-1e9b-5cb8-9d9c-11b3c9a0f4b0" />
     <podcast:remoteItem feedGuid="e9fabb3d-ddcb-58e6-a649-9feaf0cac635" itemGuid="74927b74-bd90-54e3-b5fc-193934c4c4a6" />
     <podcast:remoteItem feedGuid="d518a5ad-4df1-413e-a4a4-f2c7e146e650" itemGuid="9ee4bfee-0359-4454-b1dc-b68c6f67e2ec" />

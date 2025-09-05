@@ -6,13 +6,13 @@
     <description>Curated playlist from Mutton, Mead & Music podcast featuring Value4Value independent artists</description>
     <link>https://mmmusic.show/</link>
     <language>en</language>
-    <pubDate>Fri, 05 Sep 2025 14:15:57 GMT</pubDate>
-    <lastBuildDate>Fri, 05 Sep 2025 14:15:57 GMT</lastBuildDate>
+    <pubDate>Fri, 05 Sep 2025 20:32:35 GMT</pubDate>
+    <lastBuildDate>Fri, 05 Sep 2025 20:32:35 GMT</lastBuildDate>
     <image>
-      <url>https://raw.githubusercontent.com/ChadFarrow/chadf-musicl-playlists/main/docs/MMM-playlist-art.webp</url>
+      <url></url>
     </image>
     <podcast:medium>musicL</podcast:medium>
-    <podcast:guid>92ac9b10-20fd-4c95-a5d2-1be9681b7644</podcast:guid>
+    <podcast:guid>bbadc751-57a9-417b-b49d-357c11de91b4</podcast:guid>
     <podcast:remoteItem feedGuid="54e811c7-ebfa-5abc-91ee-02841add5677" itemGuid="86423180-661e-476e-8b2b-91b081bc2368" />
     <podcast:remoteItem feedGuid="6ca5f56d-631f-5b2d-a93f-e5f9409da30d" itemGuid="31b1e1d3-564e-46bb-9cb9-5b6eb71e1336" />
     <podcast:remoteItem feedGuid="f627794d-4376-5d08-8980-9eaa5057bd10" itemGuid="2c07cc59-ee83-47d8-b216-905f38344ecc" />
