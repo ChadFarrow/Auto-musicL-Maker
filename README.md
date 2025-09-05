@@ -2,6 +2,10 @@ Auto musicL Maker
 
 A comprehensive tool for generating musicL playlist XML files from Podcasting 2.0 music feeds, featuring both a web interface and automated playlist generation scripts.
 
+## 📋 Example Playlist
+
+See `docs/doerfelverse-playlist.xml` for a complete example of a generated musicL playlist with 126 tracks from the Into The Doerfel-Verse podcast. This example demonstrates the proper XML structure, source feed attribution, and musicL formatting.
+
 ## 🛠️ Web Interface
 
 Live: https://auto-music-l-maker.vercel.app/playlist/maker
