@@ -2,14 +2,6 @@ Auto musicL Maker
 
 A comprehensive tool for generating musicL playlist XML files from Podcasting 2.0 music feeds, featuring both a web interface and automated playlist generation scripts.
 
-## 🎵 Generated Playlists
-
-This project includes a curated musicL playlist from the Into The Doerfel-Verse podcast:
-
-**Into The Doerfel-Verse Music Playlist** (126 tracks)
-- Source: https://www.doerfelverse.com/feeds/intothedoerfelverse.xml
-- Music tracks from Into The Doerfel-Verse podcast featuring The Doerfels band and Value4Value artists
-
 ## 🛠️ Web Interface
 
 Live: https://auto-music-l-maker.vercel.app/playlist/maker
@@ -31,7 +23,6 @@ Live: https://auto-music-l-maker.vercel.app/playlist/maker
 ## 🔧 Automated Playlist Generation
 
 ### Available Scripts
-- `node scripts/create-doerfelverse-playlist.js` - Generate Into The Doerfel-Verse playlist
 - `node scripts/create-playlist-template.js` - Template for creating new playlists
 
 ### Features
