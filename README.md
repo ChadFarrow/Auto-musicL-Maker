@@ -4,31 +4,11 @@ A comprehensive tool for generating musicL playlist XML files from Podcasting 2.
 
 ## 🎵 Generated Playlists
 
-This project includes 6 curated musicL playlists from popular Value4Value music podcasts:
+This project includes a curated musicL playlist from the Into The Doerfel-Verse podcast:
 
-1. **UpBeats Music Playlist** (794 tracks)
-   - Source: https://feeds.rssblue.com/upbeats
-   - Independent artists from the UpBeats podcast
-
-2. **Flowgnar Music Playlist** (242 tracks)
-   - Source: https://feeds.oncetold.net/80000060
-   - Outdoor adventure music from Flowgnar podcast
-
-3. **Sats and Sounds Music Playlist** (815 tracks)
-   - Source: https://satsandsounds.com/saspodcast.xml
-   - Value4Value artists from Sats and Sounds podcast
-
-4. **Mutton, Mead & Music Playlist** (1,492 tracks)
-   - Source: https://mmmusic-project.ams3.cdn.digitaloceanspaces.com/Mutton_Mead__Music/feed.xml
-   - Independent artists from Mutton, Mead & Music podcast
-
-5. **Behind the Sch3m3s Music Playlist** (819 tracks)
-   - Source: https://music.behindthesch3m3s.com/b4ts feed/feed.xml
-   - Independent artists from Behind the Sch3m3s podcast
-
-6. **Mike's Mix Tape Music Playlist** (162 tracks)
-   - Source: https://mikesmixtape.com/mikesmixtaperss.xml
-   - Value4Value artists from Mike's Mix Tape podcast
+**Into The Doerfel-Verse Music Playlist** (126 tracks)
+- Source: https://www.doerfelverse.com/feeds/intothedoerfelverse.xml
+- Music tracks from Into The Doerfel-Verse podcast featuring The Doerfels band and Value4Value artists
 
 ## 🛠️ Web Interface
 
@@ -51,12 +31,8 @@ Live: https://auto-music-l-maker.vercel.app/playlist/maker
 ## 🔧 Automated Playlist Generation
 
 ### Available Scripts
-- `node scripts/create-upbeats-playlist.js` - Generate UpBeats playlist
-- `node scripts/create-flowgnar-playlist.js` - Generate Flowgnar playlist
-- `node scripts/create-satsandsounds-playlist.js` - Generate Sats and Sounds playlist
-- `node scripts/create-muttonmead-playlist.js` - Generate Mutton, Mead & Music playlist
-- `node scripts/create-behindtheschemes-playlist.js` - Generate Behind the Sch3m3s playlist
-- `node scripts/create-mikesmixtape-playlist.js` - Generate Mike's Mix Tape playlist
+- `node scripts/create-doerfelverse-playlist.js` - Generate Into The Doerfel-Verse playlist
+- `node scripts/create-playlist-template.js` - Template for creating new playlists
 
 ### Features
 - Automatically extracts existing `podcast:remoteItem` elements from source feeds
