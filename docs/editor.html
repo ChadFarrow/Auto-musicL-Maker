@@ -90,10 +90,18 @@
       <div class="row"><label for="author">Author</label><input id="author" type="text" placeholder="ChadF" /></div>
       <div class="row"><label for="title">Title</label><input id="title" type="text" /></div>
       <div class="row"><label for="description">Description</label><textarea id="description"></textarea></div>
+      <div class="row"><label for="websiteUrl">Website URL (link)</label><input id="websiteUrl" type="url" /></div>
+      <div class="row"><label for="language">Language Code</label><input id="language" type="text" placeholder="en" /></div>
       <div class="row"><label for="pubDate">Playlist Date (pubDate)</label>
         <div style="display:flex; gap:8px; align-items:center;">
           <input id="pubDate" type="text" class="mono" placeholder="Fri, 08 Aug 2025 03:06:58 GMT" />
           <button id="btnNow" type="button">Now</button>
+        </div>
+      </div>
+      <div class="row"><label for="lastBuildDate">Last Build Date</label>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input id="lastBuildDate" type="text" class="mono" placeholder="Fri, 08 Aug 2025 03:06:58 GMT" />
+          <button id="btnNowBuild" type="button">Now</button>
         </div>
       </div>
       <div class="card" style="margin-top:12px;">
@@ -121,9 +129,10 @@
         author: QS('#author'),
         title: QS('#title'),
         description: QS('#description'),
-        
+        websiteUrl: QS('#websiteUrl'),
+        language: QS('#language'),
         pubDate: QS('#pubDate'),
-        // removed: language, lastBuildDate inputs
+        lastBuildDate: QS('#lastBuildDate'),
         imageUrl: QS('#imageUrl'),
         podGuid: QS('#podGuid'),
         output: QS('#output'),
@@ -136,6 +145,7 @@
         btnDownload: QS('#btnDownload'),
         btnGenGuid: QS('#btnGenGuid'),
         btnNow: QS('#btnNow'),
+        btnNowBuild: QS('#btnNowBuild'),
       };
 
       function setStatus(msg, tone = 'muted') {
@@ -171,8 +181,11 @@
         el.author.value = text('author');
         el.title.value = text('title');
         el.description.value = text('description');
+        el.websiteUrl.value = text('link');
         feedLinkOriginal = text('link');
+        el.language.value = text('language');
         el.pubDate.value = text('pubDate');
+        el.lastBuildDate.value = text('lastBuildDate');
         el.imageUrl.value = channel.querySelector('image > url')?.textContent?.trim() || '';
         // Read namespaced tag using tagName to avoid CSS selector colon issues
         el.podGuid.value = textByTag('podcast:guid');
@@ -257,7 +270,7 @@
         appendText('author', el.author.value.trim());
         appendText('title', el.title.value.trim());
         appendText('description', el.description.value.trim());
-        appendText('link', feedLinkOriginal);
+        appendText('link', el.websiteUrl.value.trim() || feedLinkOriginal);
         // Add source feed attribution
         if (el.feedUrl.value.trim()) {
           const txtNode = doc.createElement('podcast:txt');
@@ -265,10 +278,10 @@
           txtNode.textContent = el.feedUrl.value.trim();
           channel.appendChild(txtNode);
         }
-        // Optional: default language and updated dates
-        appendText('language', 'en');
+        // Language and dates
+        appendText('language', el.language.value.trim() || 'en');
         appendText('pubDate', el.pubDate.value.trim() || rfc822Now());
-        appendText('lastBuildDate', rfc822Now());
+        appendText('lastBuildDate', el.lastBuildDate.value.trim() || rfc822Now());
 
         const image = doc.createElement('image');
         function imgChild(tag, value) {
@@ -423,6 +436,9 @@
 
       // Set pubDate to now
       el.btnNow.addEventListener('click', () => { el.pubDate.value = rfc822Now(); });
+      
+      // Set lastBuildDate to now
+      el.btnNowBuild.addEventListener('click', () => { el.lastBuildDate.value = rfc822Now(); });
 
       // If no GUID present, show a suggestion immediately
       if (!el.podGuid.value) {
