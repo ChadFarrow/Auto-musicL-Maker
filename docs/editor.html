@@ -90,7 +90,6 @@
       <div class="row"><label for="author">Author</label><input id="author" type="text" placeholder="ChadF" /></div>
       <div class="row"><label for="title">Title</label><input id="title" type="text" /></div>
       <div class="row"><label for="description">Description</label><textarea id="description"></textarea></div>
-      
       <div class="row"><label for="pubDate">Playlist Date (pubDate)</label>
         <div style="display:flex; gap:8px; align-items:center;">
           <input id="pubDate" type="text" class="mono" placeholder="Fri, 08 Aug 2025 03:06:58 GMT" />
@@ -112,16 +111,10 @@
         </div>
       </div>
     </div>
-
-    
-
     <div class="card">
       <h2>Output</h2>
       <pre id="output" class="mono" style="white-space: pre; overflow: visible;"></pre>
     </div>
-
-    
-
     <script>
       const QS = (sel) => document.querySelector(sel);
       const el = {
