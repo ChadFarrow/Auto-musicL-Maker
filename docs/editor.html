@@ -258,6 +258,13 @@
         appendText('title', el.title.value.trim());
         appendText('description', el.description.value.trim());
         appendText('link', feedLinkOriginal);
+        // Add source feed attribution
+        if (el.feedUrl.value.trim()) {
+          const txtNode = doc.createElement('podcast:txt');
+          txtNode.setAttribute('purpose', 'source-feed');
+          txtNode.textContent = el.feedUrl.value.trim();
+          channel.appendChild(txtNode);
+        }
         // Optional: default language and updated dates
         appendText('language', 'en');
         appendText('pubDate', el.pubDate.value.trim() || rfc822Now());
