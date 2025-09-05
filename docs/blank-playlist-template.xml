@@ -3,18 +3,20 @@
   Repository: https://github.com/ChadFarrow/Auto-musicL-Maker
   
   Instructions:
-  1. Replace [PLAYLIST_NAME] with your playlist title
-  2. Replace [DESCRIPTION] with your playlist description  
-  3. Replace [WEBSITE_URL] with the source website URL
-  4. Replace [CURRENT_UTC_DATE] with current date in UTC format
-  5. Replace [GENERATED_UUID] with a unique UUID (use online UUID generator)
-  6. Replace [FEED_GUID] and [ITEM_GUID] with actual GUIDs from your source feed
-  7. Add more <podcast:remoteItem> entries as needed
-  8. Optionally add an image URL in the <image><url></url> section
+  1. Replace [AUTHOR_NAME] with your name or organization
+  2. Replace [PLAYLIST_NAME] with your playlist title
+  3. Replace [DESCRIPTION] with your playlist description  
+  4. Replace [WEBSITE_URL] with the source website URL
+  5. Replace [SOURCE_FEED_URL] with the RSS feed URL
+  6. Replace [CURRENT_UTC_DATE] with current date in UTC format
+  7. Replace [GENERATED_UUID] with a unique UUID (use online UUID generator)
+  8. Replace [FEED_GUID] and [ITEM_GUID] with actual GUIDs from your source feed
+  9. Add more <podcast:remoteItem> entries as needed
+  10. Optionally add an image URL in the <image><url></url> section
 -->
 <rss version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
-    <author>ChadF</author>
+    <author>[AUTHOR_NAME]</author>
     <title>[PLAYLIST_NAME] Music Playlist</title>
     <description>[DESCRIPTION]</description>
     <link>[WEBSITE_URL]</link>
