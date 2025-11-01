@@ -52,8 +52,26 @@ Live: https://auto-music-l-maker.vercel.app/playlist/maker
 - **Clean Output**: No XML declaration, proper RSS 2.0 format
 - **Consistent Structure**: Same XML structure across web interface, templates, and scripts
 
+## 🔍 How It Works
+
+Auto-musicL-Maker creates musicL playlists by extracting music tracks from Podcasting 2.0 RSS feeds:
+
+1. **Feed Loading**: Fetches the source RSS feed (via web interface or Node.js script)
+2. **Track Extraction**: Automatically finds all `<podcast:remoteItem>` elements in the feed
+   - These elements represent music tracks embedded in podcast episodes
+   - Each `<podcast:remoteItem>` contains `feedGuid` and `itemGuid` attributes
+3. **Playlist Generation**: Creates a new musicL RSS feed with:
+   - User-provided metadata (author, title, description, website, language, dates, image)
+   - Source feed attribution via `<podcast:txt purpose="source-feed">` tag
+   - All extracted `<podcast:remoteItem>` entries as the playlist tracks
+   - Unique UUID for the playlist GUID
+   - `podcast:medium` set to `musicL` to identify it as a music playlist
+4. **Output**: Generates clean RSS 2.0 XML without XML declaration, ready for hosting
+
+The tool doesn't download or host the actual audio files - it creates a playlist feed that references the original tracks using their GUIDs, allowing musicL-compatible apps to stream the tracks from their original sources.
+
 ## 📝 Technical Notes
-- The app preserves the original channel `<link>` from the source feed
+- The app preserves the original channel `<link>` from the source feed (or uses user-provided website URL)
 - The generator sets `podcast:medium` to `musicL` and extracts all `<podcast:remoteItem>` entries found in the source feed
 - A local dev proxy exists at `/api/proxy` to avoid CORS; production uses a Vercel serverless function at `api/proxy.js`
 - All playlists follow the same XML structure for consistency
