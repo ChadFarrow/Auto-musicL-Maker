@@ -23,10 +23,32 @@ const { DOMParser } = require('xmldom');
  * NOTE: This requires network access to localbitcoiners.com AND to every show's
  * feed host. Run it locally (or in an environment whose egress policy allows
  * those hosts):  node scripts/create-localbitcoins-community-playlists.js
+ *
+ * Options (CLI flag or env var; flags win):
+ *   --url=<page>   / LBC_DIRECTORY_URL   directory page to scrape (default below)
+ *   --out=<file>   / LBC_OUTPUT_PATH      output XML path (default below)
+ *   --dry-run      / LBC_DRY_RUN=1        print the XML to stdout, do not write
  */
 
-const DIRECTORY_URL = 'https://localbitcoiners.com/feeds';
-const OUTPUT_PATH = path.join(__dirname, '../docs/localbitcoins-community-playlists.xml');
+function parseArgs(argv) {
+  const opts = {};
+  for (const a of argv) {
+    const m = /^--([^=]+)(?:=(.*))?$/.exec(a);
+    if (m) opts[m[1]] = m[2] === undefined ? true : m[2];
+  }
+  return opts;
+}
+
+const ARGS = parseArgs(process.argv.slice(2));
+
+const DIRECTORY_URL =
+  ARGS.url || process.env.LBC_DIRECTORY_URL || 'https://localbitcoiners.com/feeds';
+const OUTPUT_PATH = ARGS.out
+  ? path.resolve(ARGS.out)
+  : process.env.LBC_OUTPUT_PATH
+  ? path.resolve(process.env.LBC_OUTPUT_PATH)
+  : path.join(__dirname, '../docs/localbitcoins-community-playlists.xml');
+const DRY_RUN = Boolean(ARGS['dry-run'] || process.env.LBC_DRY_RUN);
 const PLAYLIST_TITLE = 'LocalBitcoins Community Playlists';
 const PLAYLIST_AUTHOR = 'ChadF';
 const PLAYLIST_DESCRIPTION =
@@ -102,6 +124,13 @@ async function createLocalbitcoinsCommunityPlaylists() {
   }
 
   const xml = generatePlaylist(deduped);
+
+  if (DRY_RUN) {
+    console.log('📝 --dry-run: printing XML instead of writing (' + deduped.length + ' episodes)\n');
+    console.log(xml);
+    return;
+  }
+
   fs.writeFileSync(OUTPUT_PATH, xml, 'utf8');
 
   console.log('🎉 Playlist created!');
