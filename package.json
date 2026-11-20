@@ -7,10 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test",
     "start": "node server/index.js",
     "dev": "nodemon server/index.js",
-    "update-playlists": "node scripts/update-all-playlists.js"
+    "doerfelverse": "node scripts/create-doerfelverse-playlist.js"
   },
   "repository": {
     "type": "git",
@@ -26,9 +26,9 @@
   "homepage": "https://github.com/ChadFarrow/Auto-musicL-Maker#readme",
   "private": "true",
   "dependencies": {
+    "@xmldom/xmldom": "^0.9.12",
     "express": "^5.1.0",
-    "rss-parser": "^3.13.0",
-    "xmldom": "^0.6.0"
+    "rss-parser": "^3.13.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
