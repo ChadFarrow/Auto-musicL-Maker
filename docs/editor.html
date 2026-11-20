@@ -75,7 +75,7 @@
         <li>Paste an XML feed into the box</li>
         <li>Click Load or press Enter</li>
         <li>Enter your info for the playlist you're making</li>
-        <li>If this is a new feed click the "Generate GUID" button.</li>
+        <li>Enter the URL where you will host the playlist. Its podcast:guid comes from that URL, so it stays the same each time you build it. If the playlist already has a guid, paste it instead.</li>
         <li>Click Generate XML</li>
         <li>The new feed will show up in the Output box</li>
         <li>Click Download XML to save the new feed</li>
@@ -109,20 +109,28 @@
         <div class="row"><label for="imageUrl">image.url</label><input id="imageUrl" type="url" /></div>
       </div>
       <div class="card">
-        <h2>GUID <span class="muted" style="font-weight: normal;">If this is a new feed, click "Generate GUID".</span></h2>
+        <h2>GUID <span class="muted" style="font-weight: normal;">The playlist's own identity. Never the source show's.</span></h2>
+        <div class="row"><label for="playlistUrl">Playlist feed URL</label><input id="playlistUrl" type="url" placeholder="https://example.com/my-playlist.xml (where you will host it)" /></div>
         <div class="row">
           <label for="podGuid">podcast:guid</label>
           <div style="display:flex; gap:8px; align-items:center;">
-            <input id="podGuid" type="text" class="mono" placeholder="auto-generate v4 UUID" />
+            <input id="podGuid" type="text" class="mono" placeholder="from the playlist feed URL" />
             <button id="btnGenGuid" type="button">Generate GUID</button>
           </div>
         </div>
+        <p class="muted" style="margin:4px 0 0;">Leave podcast:guid empty to use the UUIDv5 of the playlist feed URL. "Generate GUID" fills it from that URL, or with a new random guid if there is no URL: keep that guid for every later build.</p>
+      </div>
+      <div class="card">
+        <h2>Publisher <span class="muted" style="font-weight: normal;">Optional: your publisher feed, so it can list this playlist.</span></h2>
+        <div class="row"><label for="publisherGuid">Publisher feedGuid</label><input id="publisherGuid" type="text" class="mono" placeholder="UUID of your medium=publisher feed" /></div>
+        <div class="row"><label for="publisherUrl">Publisher feedUrl</label><input id="publisherUrl" type="url" placeholder="https://example.com/publisher.xml" /></div>
       </div>
     </div>
     <div class="card">
       <h2>Output</h2>
       <pre id="output" class="mono" style="white-space: pre; overflow: visible;"></pre>
     </div>
+    <script src="playlist-core.js"></script>
     <script>
       const QS = (sel) => document.querySelector(sel);
       const el = {
@@ -135,6 +143,9 @@
         lastBuildDate: QS('#lastBuildDate'),
         imageUrl: QS('#imageUrl'),
         podGuid: QS('#podGuid'),
+        playlistUrl: QS('#playlistUrl'),
+        publisherGuid: QS('#publisherGuid'),
+        publisherUrl: QS('#publisherUrl'),
         output: QS('#output'),
         status: QS('#status'),
         btnHowTo: QS('#btnHowTo'),
@@ -173,25 +184,22 @@
         currentDoc = doc;
 
         const text = (sel) => channel.querySelector(sel)?.textContent?.trim() || '';
-        const textByTag = (tagName) => {
-          const node = channel.getElementsByTagName(tagName)[0];
-          return node?.textContent?.trim() || '';
-        };
 
         el.author.value = text('author');
         el.title.value = text('title');
         el.description.value = text('description');
-        el.websiteUrl.value = text('link');
-        feedLinkOriginal = text('link');
+        // The channel's own <link>, not an <atom:link rel="self"> that comes first.
+        el.websiteUrl.value = PlaylistCore.channelLink(channel);
+        feedLinkOriginal = el.websiteUrl.value;
         el.language.value = text('language');
-        el.pubDate.value = text('pubDate');
-        el.lastBuildDate.value = text('lastBuildDate');
+        // The playlist's dates are its own build's, not the show's, and its
+        // guid is its own: neither is copied from the source feed (#14).
+        el.pubDate.value = '';
+        el.lastBuildDate.value = '';
         el.imageUrl.value = channel.querySelector('image > url')?.textContent?.trim() || '';
-        // Read namespaced tag using tagName to avoid CSS selector colon issues
-        el.podGuid.value = textByTag('podcast:guid');
 
-        // Items UI removed; skip remoteItem table population
-        setStatus('Loaded');
+        const n = PlaylistCore.extractMusicRemoteItems(doc).length;
+        setStatus(n ? `Loaded: ${n} songs` : 'Loaded, but this feed lists no songs (no music remoteItems in a valueTimeSplit)', n ? 'success' : 'warn');
       }
 
       async function fetchXmlFrom(urlStr) {
@@ -248,111 +256,36 @@
         return doc;
       }
 
-      function buildXml() {
-        // Create new document preserving podcast namespace
-        const doc = document.implementation.createDocument('', '', null);
-
-        const rss = doc.createElement('rss');
-        rss.setAttribute('version', '2.0');
-        rss.setAttribute('xmlns:podcast', 'https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md');
-        doc.appendChild(rss);
-
-        const channel = doc.createElement('channel');
-        rss.appendChild(channel);
-
-        function appendText(tag, value) {
-          if (!value) return;
-          const node = doc.createElement(tag);
-          node.textContent = value;
-          channel.appendChild(node);
-        }
-
-        appendText('author', el.author.value.trim());
-        appendText('title', el.title.value.trim());
-        appendText('description', el.description.value.trim());
-        appendText('link', el.websiteUrl.value.trim() || feedLinkOriginal);
-        // Add source feed attribution
-        if (el.feedUrl.value.trim()) {
-          const txtNode = doc.createElement('podcast:txt');
-          txtNode.setAttribute('purpose', 'source-feed');
-          txtNode.textContent = el.feedUrl.value.trim();
-          channel.appendChild(txtNode);
-        }
-        // Language and dates
-        appendText('language', el.language.value.trim() || 'en');
-        appendText('pubDate', el.pubDate.value.trim() || rfc822Now());
-        appendText('lastBuildDate', el.lastBuildDate.value.trim() || rfc822Now());
-
-        const image = doc.createElement('image');
-        function imgChild(tag, value) {
-          if (!value) return;
-          const n = doc.createElement(tag);
-          n.textContent = value;
-          image.appendChild(n);
-        }
-        imgChild('url', el.imageUrl.value.trim());
-        if (image.childNodes.length > 0) channel.appendChild(image);
-
-        appendText('podcast:medium', 'musicL');
-        appendText('podcast:guid', el.podGuid.value.trim() || generateUUIDv4());
-
-        // Prefer all podcast:remoteItem entries found in the source feed (tracks within episodes)
-        try {
-          const seenKey = new Set();
-          if (currentDoc) {
-            const remotes = Array.from(currentDoc.getElementsByTagName('podcast:remoteItem'));
-            for (const r of remotes) {
-              const fg = r.getAttribute('feedGuid')?.trim();
-              const ig = r.getAttribute('itemGuid')?.trim();
-              if (!fg || !ig) continue;
-              const key = fg + '::' + ig;
-              if (seenKey.has(key)) continue;
-              seenKey.add(key);
-              const remote = doc.createElement('podcast:remoteItem');
-              remote.setAttribute('feedGuid', fg);
-              remote.setAttribute('itemGuid', ig);
-              channel.appendChild(remote);
-            }
-            // Fallback: if none found, include episode GUIDs as before
-            if (remotes.length === 0) {
-              const ch = currentDoc.querySelector('channel');
-              const feedGuid = (currentDoc.getElementsByTagName('podcast:guid')[0]?.textContent || '').trim();
-              if (ch && feedGuid) {
-                const directItems = Array.from(ch.children).filter(n => n.tagName && n.tagName.toLowerCase() === 'item');
-                const seen = new Set();
-                for (const it of directItems) {
-                  const guidNode = it.querySelector('guid');
-                  const g = (guidNode?.textContent || '').trim();
-                  if (!g || seen.has(g)) continue;
-                  seen.add(g);
-                  const remote = doc.createElement('podcast:remoteItem');
-                  remote.setAttribute('feedGuid', feedGuid);
-                  remote.setAttribute('itemGuid', g);
-                  channel.appendChild(remote);
-                }
-              }
-            }
-          }
-        } catch (_) { /* ignore */ }
-        // No <item> wrapper is used in the generated playlist
-
-        const xml = new XMLSerializer().serializeToString(doc);
-        return formatXml(xml);
+      // The playlist's guid: the one in the field, else the UUIDv5 of the
+      // playlist's own feed URL. A random guid is minted only by the button,
+      // and then stays in the field, so two builds never differ (#14).
+      function playlistGuid() {
+        const typed = el.podGuid.value.trim();
+        if (typed) return typed;
+        return PlaylistCore.podcastGuidFromUrl(el.playlistUrl.value);
       }
 
-      function formatXml(xml) {
-        // Simple pretty printer for readability
-        const PADDING = '  ';
-        const reg = /(>)(<)(\/*)/g;
-        let formatted = '';
-        let pad = 0;
-        xml = xml.replace(reg, '$1\n$2$3');
-        xml.split('\n').forEach((node) => {
-          if (node.match(/^\s*<\//)) pad -= 1;
-          formatted += PADDING.repeat(pad) + node + '\n';
-          if (node.match(/^\s*<[^!?][^>]*[^\/]>/) && !node.includes('</')) pad += 1;
+      function buildXml() {
+        if (!currentDoc) throw new Error('Load a feed first');
+        const guid = playlistGuid();
+        if (!guid) throw new Error('Enter the playlist feed URL, or a podcast:guid');
+        if (!PlaylistCore.isUuid(guid)) throw new Error('podcast:guid must be a UUID');
+        const items = PlaylistCore.extractMusicRemoteItems(currentDoc);
+        if (items.length === 0) throw new Error('This feed lists no songs to put in a playlist');
+        return PlaylistCore.buildPlaylistXml({
+          title: el.title.value,
+          author: el.author.value,
+          description: el.description.value,
+          link: el.websiteUrl.value.trim() || feedLinkOriginal,
+          language: el.language.value,
+          pubDate: el.pubDate.value,
+          lastBuildDate: el.lastBuildDate.value,
+          imageUrl: el.imageUrl.value,
+          guid,
+          sourceFeedUrl: el.feedUrl.value,
+          publisher: { feedGuid: el.publisherGuid.value, feedUrl: el.publisherUrl.value },
+          items,
         });
-        return formatted.trim();
       }
 
       // GUID generator (RFC 4122 v4) using Web Crypto
@@ -410,18 +343,26 @@
         try {
           const xml = buildXml();
           el.output.textContent = xml;
-          setStatus('XML generated', 'success');
+          const n = (xml.match(/<podcast:remoteItem feedGuid=/g) || []).length;
+          setStatus(`XML generated: ${n} songs`, 'success');
         } catch (e) {
           setStatus('Generate failed: ' + (e?.message || e), 'warn');
         }
       });
 
       el.btnDownload.addEventListener('click', () => {
-        const text = (el.output.textContent || '').trim() || buildXml();
+        let text;
+        try {
+          text = (el.output.textContent || '').trim() || buildXml();
+        } catch (e) {
+          setStatus('Download failed: ' + (e?.message || e), 'warn');
+          return;
+        }
         const blob = new Blob([text + '\n'], { type: 'application/xml' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'doerfel-verse-music.xml';
+        const slug = el.title.value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        a.download = (slug || 'musicl-playlist') + '.xml';
         a.click();
         URL.revokeObjectURL(a.href);
       });
@@ -430,8 +371,14 @@
 
       // Generate GUID on demand
       el.btnGenGuid.addEventListener('click', () => {
-        el.podGuid.value = generateUUIDv4();
-        setStatus('New GUID generated', 'success');
+        const fromUrl = PlaylistCore.podcastGuidFromUrl(el.playlistUrl.value);
+        if (fromUrl) {
+          el.podGuid.value = fromUrl;
+          setStatus('GUID from the playlist feed URL', 'success');
+        } else {
+          el.podGuid.value = generateUUIDv4();
+          setStatus('New random GUID: keep it for every later build of this playlist', 'warn');
+        }
       });
 
       // Set pubDate to now
@@ -439,11 +386,6 @@
       
       // Set lastBuildDate to now
       el.btnNowBuild.addEventListener('click', () => { el.lastBuildDate.value = rfc822Now(); });
-
-      // If no GUID present, show a suggestion immediately
-      if (!el.podGuid.value) {
-        el.podGuid.value = generateUUIDv4();
-      }
 
       // Preload logic: support ?url=<feed>&autoload=1 to auto-load a feed
       (function initPreload() {

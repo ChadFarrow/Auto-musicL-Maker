@@ -32,7 +32,8 @@ Live: https://auto-music-l-maker.vercel.app/playlist/maker
    - Language Code (defaults to 'en')
    - Playlist Date and Last Build Date (use "Now" buttons)
    - Image URL (optional)
-   - GUID (click "Generate GUID" for new feeds)
+   - Playlist feed URL: where you will host the playlist. Its `podcast:guid` is the UUIDv5 of this URL, so it is the same on every build. If the playlist already has a guid, paste it in the GUID field instead.
+   - Publisher feedGuid / feedUrl (optional): your `medium="publisher"` feed, written as a `<podcast:publisher>` back-link
 4. Click Generate XML
 5. The generated XML appears in the Output section
 6. Click Download XML to save the playlist
@@ -45,11 +46,12 @@ Live: https://auto-music-l-maker.vercel.app/playlist/maker
 
 ### Features
 - **Complete Field Control**: Input fields for all playlist metadata (author, title, description, website URL, language, dates, image, GUID)
-- **Automatic Extraction**: Extracts existing `podcast:remoteItem` elements from source feeds
-- **Smart Defaults**: Auto-generates UUIDs, dates, and language codes with user override capability
+- **Automatic Extraction**: Takes the songs a show plays: `podcast:remoteItem` elements inside `podcast:valueTimeSplit` whose `medium` is absent or `music`
+- **Stable identity**: The playlist's `podcast:guid` is its own (UUIDv5 of its feed URL), never the source show's, and never a new one per build
+- **One writer**: The web maker and the scripts share `docs/playlist-core.js`; `npm test` covers it
 - **Source Attribution**: Includes `<podcast:txt purpose="source-feed">` tags for proper attribution
 - **Standards Compliant**: Follows Podcasting 2.0 musicL specifications
-- **Clean Output**: No XML declaration, proper RSS 2.0 format
+- **Valid XML**: Every value is escaped; characters XML forbids are dropped
 - **Consistent Structure**: Same XML structure across web interface, templates, and scripts
 
 ## 🔍 How It Works
