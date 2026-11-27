@@ -1,6 +1,7 @@
 // Vercel serverless proxy for fetching external RSS feeds (avoids CORS)
 const http = require('http');
 const https = require('https');
+const { USER_AGENT } = require('../lib/user-agent.js');
 
 module.exports = async function handler(req, res) {
   try {
@@ -35,7 +36,7 @@ module.exports = async function handler(req, res) {
     const agent = protocol === 'https:' ? https : http;
     agent.get(url, {
       headers: {
-        'User-Agent': 'Auto-musicL-Maker/1.0 (+https://github.com/ChadFarrow/Auto-musicL-Maker)'
+        'User-Agent': USER_AGENT
       }
     }, (upstream) => {
       const status = upstream.statusCode || 502;
