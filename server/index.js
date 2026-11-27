@@ -3,6 +3,7 @@ const path = require('path');
 const url = require('url');
 const http = require('http');
 const https = require('https');
+const { USER_AGENT } = require('../lib/user-agent.js');
 
 const app = express();
 const PORT = process.env.PORT || 3007;
@@ -60,7 +61,7 @@ app.get('/api/proxy', async (req, res) => {
     const agent = protocol === 'https:' ? https : http;
     agent.get(target, {
       headers: {
-        'User-Agent': 'Auto-musicL-Maker/1.0 (+https://github.com/ChadFarrow/Auto-musicL-Maker)'
+        'User-Agent': USER_AGENT
       }
     }, (upstream) => {
       const status = upstream.statusCode || 502;
